@@ -10,6 +10,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Routes
+const authRoutes = require('./routes/authRoutes');
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -27,6 +30,9 @@ app.get('/', (req, res) => {
     version: '1.0.0'
   });
 });
+
+// API Routes
+app.use('/api/auth', authRoutes);
 
 // 404 handler
 app.use((req, res) => {
