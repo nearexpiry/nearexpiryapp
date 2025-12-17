@@ -20,6 +20,14 @@ const Navbar = () => {
         </Link>
 
         <div className="navbar-menu">
+          {/* Public links visible to everyone */}
+          <Link to="/browse" className="navbar-link">
+            Browse Products
+          </Link>
+          <Link to="/restaurants" className="navbar-link">
+            Restaurants
+          </Link>
+
           {isAuthenticated ? (
             <>
               {user?.role === 'restaurant' && (

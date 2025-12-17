@@ -1,9 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Home.css';
 
 const Home = () => {
   const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="home-container">
@@ -28,6 +30,20 @@ const Home = () => {
                     <li>Help reduce food waste</li>
                     <li>Save money on your purchases</li>
                   </ul>
+                  <div className="home-actions">
+                    <button
+                      className="home-action-button primary"
+                      onClick={() => navigate('/browse')}
+                    >
+                      Browse Products
+                    </button>
+                    <button
+                      className="home-action-button secondary"
+                      onClick={() => navigate('/restaurants')}
+                    >
+                      View Restaurants Map
+                    </button>
+                  </div>
                 </>
               )}
 
@@ -76,6 +92,21 @@ const Home = () => {
                 <h3>For Restaurants</h3>
                 <p>Reduce food waste and recover costs on near-expiry items</p>
               </div>
+            </div>
+
+            <div className="home-actions">
+              <button
+                className="home-action-button primary"
+                onClick={() => navigate('/browse')}
+              >
+                Browse Products
+              </button>
+              <button
+                className="home-action-button secondary"
+                onClick={() => navigate('/restaurants')}
+              >
+                View Restaurants
+              </button>
             </div>
 
             <p className="home-cta">Login or register to get started!</p>
