@@ -28,8 +28,13 @@ const Login = () => {
     const result = await login(email, password);
 
     if (result.success) {
-      // Redirect to home page or dashboard
-      navigate('/');
+      // Redirect based on user role
+      const userRole = result.data?.user?.role;
+      if (userRole === 'restaurant') {
+        navigate('/restaurant/profile');
+      } else {
+        navigate('/');
+      }
     } else {
       setError(result.error);
     }
