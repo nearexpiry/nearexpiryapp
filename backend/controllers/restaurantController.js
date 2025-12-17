@@ -11,7 +11,7 @@ const createOrUpdateProfile = async (req, res) => {
 
   try {
     const userId = req.user.userId;
-    const { name, description, address, phone } = req.body;
+    const { name, description, address, phone, logo_url } = req.body;
 
     // Validation
     if (!name || !address || !phone) {
@@ -56,22 +56,37 @@ const createOrUpdateProfile = async (req, res) => {
 
     if (existingRestaurant.rows.length > 0) {
       // Update existing restaurant
-      const result = await client.query(
-        `UPDATE restaurants
-         SET name = $1, description = $2, address = $3, latitude = $4, longitude = $5, phone = $6
-         WHERE user_id = $7
-         RETURNING id, user_id, name, description, address, latitude, longitude, phone, logo_url, is_open, created_at, updated_at`,
-        [name, description || null, address, latitude, longitude, phone, userId]
-      );
+      const updateQuery = logo_url
+        ? `UPDATE restaurants
+           SET name = $1, description = $2, address = $3, latitude = $4, longitude = $5, phone = $6, logo_url = $7
+           WHERE user_id = $8
+           RETURNING id, user_id, name, description, address, latitude, longitude, phone, logo_url, is_open, created_at, updated_at`
+        : `UPDATE restaurants
+           SET name = $1, description = $2, address = $3, latitude = $4, longitude = $5, phone = $6
+           WHERE user_id = $7
+           RETURNING id, user_id, name, description, address, latitude, longitude, phone, logo_url, is_open, created_at, updated_at`;
+
+      const updateParams = logo_url
+        ? [name, description || null, address, latitude, longitude, phone, logo_url, userId]
+        : [name, description || null, address, latitude, longitude, phone, userId];
+
+      const result = await client.query(updateQuery, updateParams);
       restaurant = result.rows[0];
     } else {
       // Create new restaurant
-      const result = await client.query(
-        `INSERT INTO restaurants (user_id, name, description, address, latitude, longitude, phone)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
-         RETURNING id, user_id, name, description, address, latitude, longitude, phone, logo_url, is_open, created_at, updated_at`,
-        [userId, name, description || null, address, latitude, longitude, phone]
-      );
+      const insertQuery = logo_url
+        ? `INSERT INTO restaurants (user_id, name, description, address, latitude, longitude, phone, logo_url)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+           RETURNING id, user_id, name, description, address, latitude, longitude, phone, logo_url, is_open, created_at, updated_at`
+        : `INSERT INTO restaurants (user_id, name, description, address, latitude, longitude, phone)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)
+           RETURNING id, user_id, name, description, address, latitude, longitude, phone, logo_url, is_open, created_at, updated_at`;
+
+      const insertParams = logo_url
+        ? [userId, name, description || null, address, latitude, longitude, phone, logo_url]
+        : [userId, name, description || null, address, latitude, longitude, phone];
+
+      const result = await client.query(insertQuery, insertParams);
       restaurant = result.rows[0];
     }
 

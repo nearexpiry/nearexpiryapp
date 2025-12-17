@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import ImageUpload from '../../components/ImageUpload';
 import './RestaurantProfile.css';
 
 const RestaurantProfile = () => {
@@ -10,6 +11,7 @@ const RestaurantProfile = () => {
     description: '',
     address: '',
     phone: '',
+    logo_url: '',
   });
 
   const [restaurantData, setRestaurantData] = useState(null);
@@ -35,6 +37,7 @@ const RestaurantProfile = () => {
         description: restaurant.description || '',
         address: restaurant.address || '',
         phone: restaurant.phone || '',
+        logo_url: restaurant.logoUrl || '',
       });
     } catch (error) {
       // If 404, it means no profile exists yet, which is fine
@@ -56,6 +59,33 @@ const RestaurantProfile = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleLogoUploadSuccess = async (imageUrl) => {
+    // Update formData with the new logo URL
+    setFormData((prev) => ({
+      ...prev,
+      logo_url: imageUrl,
+    }));
+
+    // Auto-save the profile with the new logo URL
+    try {
+      const updatedData = { ...formData, logo_url: imageUrl };
+      const response = await axiosInstance.post('/restaurants/profile', updatedData);
+      const restaurant = response.data.data.restaurant;
+
+      setRestaurantData(restaurant);
+      setMessage({
+        type: 'success',
+        text: 'Logo uploaded successfully!',
+      });
+    } catch (error) {
+      console.error('Failed to save logo:', error);
+      setMessage({
+        type: 'error',
+        text: error.response?.data?.message || 'Failed to save logo',
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -230,12 +260,14 @@ const RestaurantProfile = () => {
           </div>
         )}
 
-        {restaurantData && restaurantData.logoUrl && (
-          <div className="logo-display">
-            <h3>Current Logo</h3>
-            <img src={restaurantData.logoUrl} alt="Restaurant logo" />
-          </div>
-        )}
+        <div className="form-group">
+          <ImageUpload
+            onUploadSuccess={handleLogoUploadSuccess}
+            currentImageUrl={formData.logo_url}
+            uploadType="logo"
+            label="Restaurant Logo"
+          />
+        </div>
 
         <div className="form-actions">
           <button
