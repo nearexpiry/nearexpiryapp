@@ -3,11 +3,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import RestaurantDashboardLayout from './components/RestaurantDashboardLayout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import RestaurantProfile from './pages/restaurant/RestaurantProfile';
 import './App.css';
 
 function App() {
@@ -33,17 +35,21 @@ function App() {
               }
             />
 
-            {/* Add more protected routes here as needed */}
-            {/* Example with role-based access:
+            {/* Restaurant Routes - Protected, restaurant role only */}
             <Route
-              path="/restaurant-dashboard"
+              path="/restaurant/*"
               element={
                 <ProtectedRoute allowedRoles="restaurant">
-                  <RestaurantDashboard />
+                  <RestaurantDashboardLayout />
                 </ProtectedRoute>
               }
-            />
-            */}
+            >
+              <Route path="profile" element={<RestaurantProfile />} />
+              {/* Add more restaurant routes here as needed */}
+              {/* <Route path="products" element={<RestaurantProducts />} /> */}
+              {/* <Route path="orders" element={<RestaurantOrders />} /> */}
+              {/* <Route path="sales" element={<RestaurantSales />} /> */}
+            </Route>
           </Routes>
         </div>
       </AuthProvider>
