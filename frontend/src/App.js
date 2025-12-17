@@ -10,6 +10,8 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import RestaurantProfile from './pages/restaurant/RestaurantProfile';
+import Products from './pages/restaurant/Products';
+import ProductForm from './pages/restaurant/ProductForm';
 import './App.css';
 
 function App() {
@@ -45,8 +47,10 @@ function App() {
               }
             >
               <Route path="profile" element={<RestaurantProfile />} />
+              <Route path="products" element={<Products />} />
+              <Route path="products/new" element={<ProductForm />} />
+              <Route path="products/edit/:id" element={<ProductForm />} />
               {/* Add more restaurant routes here as needed */}
-              {/* <Route path="products" element={<RestaurantProducts />} /> */}
               {/* <Route path="orders" element={<RestaurantOrders />} /> */}
               {/* <Route path="sales" element={<RestaurantSales />} /> */}
             </Route>
