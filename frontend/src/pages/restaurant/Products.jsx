@@ -24,7 +24,7 @@ const Products = () => {
       }
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/products/my-products`,
+        `${process.env.REACT_APP_API_URL}/products/my-products`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -55,7 +55,7 @@ const Products = () => {
       }
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/products/${productId}`,
+        `${process.env.REACT_APP_API_URL}/products/${productId}`,
         {
           method: 'DELETE',
           headers: {

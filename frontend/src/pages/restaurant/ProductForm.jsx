@@ -40,7 +40,7 @@ const ProductForm = () => {
       }
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/products/${id}`,
+        `${process.env.REACT_APP_API_URL}/products/${id}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -166,8 +166,8 @@ const ProductForm = () => {
       }
 
       const url = isEditMode
-        ? `${process.env.REACT_APP_API_URL}/api/products/${id}`
-        : `${process.env.REACT_APP_API_URL}/api/products`;
+        ? `${process.env.REACT_APP_API_URL}/products/${id}`
+        : `${process.env.REACT_APP_API_URL}/products`;
 
       const method = isEditMode ? 'PUT' : 'POST';
 

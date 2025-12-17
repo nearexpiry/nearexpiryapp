@@ -15,7 +15,7 @@ const CategoryDropdown = ({ value, onChange, error }) => {
       setLoading(true);
       setFetchError(null);
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/categories`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/categories`);
       const data = await response.json();
 
       if (data.status === 'success') {
