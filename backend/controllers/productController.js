@@ -402,14 +402,14 @@ const getMyProducts = async (req, res) => {
 
     const restaurantId = restaurantResult.rows[0].id;
 
-    // Get all products for this restaurant with category information
+    // Get all active products for this restaurant with category information
     const result = await query(
       `SELECT p.id, p.restaurant_id, p.category_id, p.name, p.description, p.image_url,
               p.price, p.quantity, p.expiry_date, p.is_active, p.created_at, p.updated_at,
               c.name as category_name
        FROM products p
        JOIN categories c ON p.category_id = c.id
-       WHERE p.restaurant_id = $1
+       WHERE p.restaurant_id = $1 AND p.is_active = true
        ORDER BY p.created_at DESC`,
       [restaurantId]
     );
