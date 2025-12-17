@@ -42,8 +42,12 @@ const Register = () => {
     const result = await register(email, password, role);
 
     if (result.success) {
-      // Redirect to home page or dashboard
-      navigate('/');
+      // Redirect based on user role
+      if (role === 'restaurant') {
+        navigate('/restaurant/profile');
+      } else {
+        navigate('/');
+      }
     } else {
       setError(result.error);
     }

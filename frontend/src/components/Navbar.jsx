@@ -22,6 +22,11 @@ const Navbar = () => {
         <div className="navbar-menu">
           {isAuthenticated ? (
             <>
+              {user?.role === 'restaurant' && (
+                <Link to="/restaurant/profile" className="navbar-link">
+                  Dashboard
+                </Link>
+              )}
               <span className="navbar-user">
                 {user?.email}
                 <span className="navbar-role">({user?.role})</span>
