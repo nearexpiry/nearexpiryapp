@@ -71,8 +71,8 @@ const ImageUpload = ({
 
       // Determine endpoint based on upload type
       const endpoint = uploadType === 'logo'
-        ? `${process.env.REACT_APP_API_URL}/api/upload/logo`
-        : `${process.env.REACT_APP_API_URL}/api/upload/product-image`;
+        ? `${process.env.REACT_APP_API_URL}/upload/logo`
+        : `${process.env.REACT_APP_API_URL}/upload/product-image`;
 
       // Upload with progress tracking
       const xhr = new XMLHttpRequest();
