@@ -468,7 +468,7 @@ const getProductById = async (req, res) => {
       `SELECT p.id, p.restaurant_id, p.category_id, p.name, p.description, p.image_url,
               p.price, p.quantity, p.expiry_date, p.is_active, p.created_at, p.updated_at,
               c.name as category_name,
-              r.name as restaurant_name
+              r.name as restaurant_name, r.address as restaurant_address, r.phone as restaurant_phone
        FROM products p
        JOIN categories c ON p.category_id = c.id
        JOIN restaurants r ON p.restaurant_id = r.id
@@ -492,6 +492,8 @@ const getProductById = async (req, res) => {
           id: product.id,
           restaurantId: product.restaurant_id,
           restaurantName: product.restaurant_name,
+          restaurantAddress: product.restaurant_address,
+          restaurantPhone: product.restaurant_phone,
           categoryId: product.category_id,
           categoryName: product.category_name,
           name: product.name,
@@ -515,10 +517,161 @@ const getProductById = async (req, res) => {
   }
 };
 
+/**
+ * Get all products with filters, search, sorting, and pagination (public endpoint)
+ * GET /api/client/products
+ * @access Public
+ * Query params: search, category, minPrice, maxPrice, sortBy, page, limit
+ */
+const getAllProducts = async (req, res) => {
+  try {
+    const {
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      sortBy = 'created_desc',
+      page = 1,
+      limit = 12,
+    } = req.query;
+
+    // Validate pagination parameters
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit) || 12));
+    const offset = (pageNum - 1) * limitNum;
+
+    // Build query conditions
+    const conditions = ['p.is_active = true', 'r.is_open = true'];
+    const params = [];
+    let paramIndex = 1;
+
+    // Search by product name
+    if (search && search.trim()) {
+      conditions.push(`p.name ILIKE $${paramIndex}`);
+      params.push(`%${search.trim()}%`);
+      paramIndex++;
+    }
+
+    // Filter by category
+    if (category) {
+      conditions.push(`p.category_id = $${paramIndex}`);
+      params.push(category);
+      paramIndex++;
+    }
+
+    // Filter by minimum price
+    if (minPrice !== undefined && minPrice !== '') {
+      const minPriceNum = parseFloat(minPrice);
+      if (!isNaN(minPriceNum) && minPriceNum >= 0) {
+        conditions.push(`p.price >= $${paramIndex}`);
+        params.push(minPriceNum);
+        paramIndex++;
+      }
+    }
+
+    // Filter by maximum price
+    if (maxPrice !== undefined && maxPrice !== '') {
+      const maxPriceNum = parseFloat(maxPrice);
+      if (!isNaN(maxPriceNum) && maxPriceNum >= 0) {
+        conditions.push(`p.price <= $${paramIndex}`);
+        params.push(maxPriceNum);
+        paramIndex++;
+      }
+    }
+
+    // Determine sort order
+    let orderBy;
+    switch (sortBy) {
+      case 'price_asc':
+        orderBy = 'p.price ASC';
+        break;
+      case 'price_desc':
+        orderBy = 'p.price DESC';
+        break;
+      case 'expiry_asc':
+        orderBy = 'p.expiry_date ASC';
+        break;
+      case 'created_desc':
+      default:
+        orderBy = 'p.created_at DESC';
+        break;
+    }
+
+    const whereClause = conditions.join(' AND ');
+
+    // Get total count for pagination
+    const countQuery = `
+      SELECT COUNT(*) as total
+      FROM products p
+      JOIN restaurants r ON p.restaurant_id = r.id
+      WHERE ${whereClause}
+    `;
+
+    const countResult = await query(countQuery, params);
+    const totalItems = parseInt(countResult.rows[0].total);
+    const totalPages = Math.ceil(totalItems / limitNum);
+
+    // Get products with pagination
+    const productsQuery = `
+      SELECT p.id, p.restaurant_id, p.category_id, p.name, p.description, p.image_url,
+             p.price, p.quantity, p.expiry_date, p.created_at,
+             c.name as category_name,
+             r.name as restaurant_name
+      FROM products p
+      JOIN categories c ON p.category_id = c.id
+      JOIN restaurants r ON p.restaurant_id = r.id
+      WHERE ${whereClause}
+      ORDER BY ${orderBy}
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `;
+
+    params.push(limitNum, offset);
+
+    const result = await query(productsQuery, params);
+
+    const products = result.rows.map(product => ({
+      id: product.id,
+      restaurantId: product.restaurant_id,
+      restaurantName: product.restaurant_name,
+      categoryId: product.category_id,
+      categoryName: product.category_name,
+      name: product.name,
+      description: product.description,
+      imageUrl: product.image_url,
+      price: parseFloat(product.price),
+      quantity: product.quantity,
+      expiryDate: product.expiry_date,
+      createdAt: product.created_at,
+    }));
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        products,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          totalItems,
+          totalPages,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1,
+        },
+      },
+    });
+  } catch (error) {
+    console.error('Get all products error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to get products.',
+    });
+  }
+};
+
 module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
   getMyProducts,
   getProductById,
+  getAllProducts,
 };
