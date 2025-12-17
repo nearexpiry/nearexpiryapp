@@ -12,6 +12,9 @@ import ResetPassword from './pages/ResetPassword';
 import RestaurantProfile from './pages/restaurant/RestaurantProfile';
 import Products from './pages/restaurant/Products';
 import ProductForm from './pages/restaurant/ProductForm';
+import BrowseProducts from './pages/client/BrowseProducts';
+import RestaurantsMap from './pages/client/RestaurantsMap';
+import ProductDetail from './pages/client/ProductDetail';
 import './App.css';
 
 function App() {
@@ -26,6 +29,11 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+
+            {/* Client Public Routes */}
+            <Route path="/browse" element={<BrowseProducts />} />
+            <Route path="/restaurants" element={<RestaurantsMap />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
 
             {/* Protected Routes */}
             <Route
