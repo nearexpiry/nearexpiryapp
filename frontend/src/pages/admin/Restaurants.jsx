@@ -39,7 +39,7 @@ const Restaurants = () => {
   const loadRestaurantDetails = async (restaurant) => {
     try {
       // Load product count and sales data
-      const productsResponse = await axiosInstance.get('/products', {
+      const productsResponse = await axiosInstance.get('/client/products', {
         params: { restaurant_id: restaurant.restaurant.id },
       });
 
