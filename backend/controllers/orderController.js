@@ -269,7 +269,7 @@ const getRestaurantOrders = async (req, res) => {
         o.status, o.order_type, o.delivery_address, o.delivery_phone,
         o.created_at, o.updated_at,
         u.email as client_email,
-        COALESCE(u.full_name, u.email) as client_name
+        u.email as client_name
       FROM orders o
       JOIN users u ON o.client_id = u.id
       WHERE o.restaurant_id = $1
