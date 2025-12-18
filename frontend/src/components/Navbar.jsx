@@ -30,6 +30,11 @@ const Navbar = () => {
               <Link to="/restaurants" className="navbar-link">
                 Restaurants
               </Link>
+              {isAuthenticated && user?.role === 'client' && (
+                <Link to="/orders" className="navbar-link">
+                  My Orders
+                </Link>
+              )}
               <CartIcon />
             </>
           )}

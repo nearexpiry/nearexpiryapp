@@ -93,8 +93,8 @@ const Checkout = () => {
         // Show success message
         alert('Order placed successfully! Order ID: ' + response.data.data.order.id);
 
-        // Redirect to home or orders page
-        navigate('/');
+        // Redirect to orders page
+        navigate('/orders');
       } else {
         throw new Error(response.data.message || 'Failed to place order');
       }
