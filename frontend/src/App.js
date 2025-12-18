@@ -5,6 +5,7 @@ import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import RestaurantDashboardLayout from './components/RestaurantDashboardLayout';
+import AdminLayout from './components/AdminLayout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -22,6 +23,10 @@ import Cart from './pages/client/Cart';
 import Checkout from './pages/client/Checkout';
 import OrderHistory from './pages/client/OrderHistory';
 import OrderDetails from './pages/client/OrderDetails';
+import AdminDashboard from './pages/admin/Dashboard';
+import AdminUsers from './pages/admin/Users';
+import AdminRestaurants from './pages/admin/Restaurants';
+import AdminSettings from './pages/admin/Settings';
 import './App.css';
 
 function App() {
@@ -73,6 +78,21 @@ function App() {
               <Route path="orders" element={<Orders />} />
               <Route path="sales" element={<Sales />} />
               {/* Add more restaurant routes here as needed */}
+            </Route>
+
+            {/* Admin Routes - Protected, admin role only */}
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute allowedRoles="admin">
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="restaurants" element={<AdminRestaurants />} />
+              <Route path="settings" element={<AdminSettings />} />
             </Route>
           </Routes>
           </div>
