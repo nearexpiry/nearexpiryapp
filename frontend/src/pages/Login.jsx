@@ -32,6 +32,8 @@ const Login = () => {
       const userRole = result.data?.user?.role;
       if (userRole === 'restaurant') {
         navigate('/restaurant/profile');
+      } else if (userRole === 'admin') {
+        navigate('/admin/dashboard');
       } else {
         navigate('/');
       }

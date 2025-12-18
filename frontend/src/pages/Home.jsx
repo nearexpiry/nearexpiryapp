@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Home.css';
@@ -6,6 +6,13 @@ import './Home.css';
 const Home = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect admin users to dashboard
+  useEffect(() => {
+    if (isAuthenticated && user?.role === 'admin') {
+      navigate('/admin/dashboard');
+    }
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <div className="home-container">
