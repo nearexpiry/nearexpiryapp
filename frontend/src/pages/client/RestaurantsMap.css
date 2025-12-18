@@ -215,13 +215,11 @@
 
 .restaurant-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 12px;
   margin-top: 15px;
   padding-top: 15px;
   border-top: 1px solid #eee;
-  flex-wrap: wrap;
-  gap: 10px;
 }
 
 .restaurant-status {
@@ -229,6 +227,8 @@
   border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
+  display: inline-block;
+  width: fit-content;
 }
 
 .restaurant-status.open {
@@ -249,13 +249,16 @@
 
 .location-btn,
 .products-btn {
-  padding: 6px 12px;
+  padding: 8px 16px;
   border: none;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
+  flex: 1;
+  min-width: 120px;
 }
 
 .location-btn {
@@ -364,11 +367,12 @@
 
   .restaurant-actions {
     flex-direction: column;
-    width: 100%;
   }
 
   .location-btn,
   .products-btn {
     width: 100%;
+    flex: none;
+    min-width: 0;
   }
 }
