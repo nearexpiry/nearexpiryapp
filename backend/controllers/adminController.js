@@ -376,10 +376,356 @@ const updateCommission = async (req, res) => {
   }
 };
 
+/**
+ * Get comprehensive sales analytics
+ * GET /api/admin/analytics
+ * @access Protected - Admin role only
+ */
+const getSalesAnalytics = async (req, res) => {
+  try {
+    const { period = 'all', restaurantId } = req.query;
+
+    // Build date filter based on period
+    let dateFilter = '';
+    const queryParams = [];
+    let paramCounter = 1;
+
+    if (period !== 'all') {
+      const now = new Date();
+      let startDate = new Date();
+
+      switch (period) {
+        case '7days':
+          startDate.setDate(now.getDate() - 7);
+          break;
+        case '30days':
+          startDate.setDate(now.getDate() - 30);
+          break;
+        case '3months':
+          startDate.setMonth(now.getMonth() - 3);
+          break;
+        case '1year':
+          startDate.setFullYear(now.getFullYear() - 1);
+          break;
+        default:
+          startDate = null;
+      }
+
+      if (startDate) {
+        dateFilter = `AND o.created_at >= $${paramCounter}`;
+        queryParams.push(startDate.toISOString());
+        paramCounter++;
+      }
+    }
+
+    // Add restaurant filter if provided
+    let restaurantFilter = '';
+    if (restaurantId) {
+      restaurantFilter = `AND o.restaurant_id = $${paramCounter}`;
+      queryParams.push(restaurantId);
+      paramCounter++;
+    }
+
+    // 1. Total revenue and commission
+    const revenueResult = await query(
+      `SELECT
+        COALESCE(SUM(total_amount), 0) as total_revenue,
+        COALESCE(SUM(commission_amount), 0) as total_commission,
+        COALESCE(SUM(total_amount - commission_amount), 0) as net_revenue,
+        COUNT(*) as total_orders
+      FROM orders o
+      WHERE 1=1 ${dateFilter} ${restaurantFilter}`,
+      queryParams
+    );
+
+    // 2. Orders breakdown by status
+    const ordersByStatusResult = await query(
+      `SELECT
+        status,
+        COUNT(*) as count,
+        COALESCE(SUM(total_amount), 0) as revenue
+      FROM orders o
+      WHERE 1=1 ${dateFilter} ${restaurantFilter}
+      GROUP BY status
+      ORDER BY count DESC`,
+      queryParams
+    );
+
+    // 3. Monthly revenue trend (last 12 months)
+    const monthlyTrendResult = await query(
+      `SELECT
+        DATE_TRUNC('month', created_at) as month,
+        COALESCE(SUM(total_amount), 0) as revenue,
+        COALESCE(SUM(commission_amount), 0) as commission,
+        COUNT(*) as orders
+      FROM orders
+      WHERE created_at >= NOW() - INTERVAL '12 months' ${restaurantFilter}
+      GROUP BY DATE_TRUNC('month', created_at)
+      ORDER BY month ASC`,
+      restaurantId ? [restaurantId] : []
+    );
+
+    // 4. Top performing restaurants
+    let topRestaurantsQueryParams = [];
+    let topRestaurantsParamCounter = 1;
+    let topRestaurantsDateFilter = '';
+    let topRestaurantsRestaurantFilter = '';
+
+    if (period !== 'all') {
+      const now = new Date();
+      let startDate = new Date();
+
+      switch (period) {
+        case '7days':
+          startDate.setDate(now.getDate() - 7);
+          break;
+        case '30days':
+          startDate.setDate(now.getDate() - 30);
+          break;
+        case '3months':
+          startDate.setMonth(now.getMonth() - 3);
+          break;
+        case '1year':
+          startDate.setFullYear(now.getFullYear() - 1);
+          break;
+        default:
+          startDate = null;
+      }
+
+      if (startDate) {
+        topRestaurantsDateFilter = `AND o.created_at >= $${topRestaurantsParamCounter}`;
+        topRestaurantsQueryParams.push(startDate.toISOString());
+        topRestaurantsParamCounter++;
+      }
+    }
+
+    if (restaurantId) {
+      topRestaurantsRestaurantFilter = `WHERE r.id = $${topRestaurantsParamCounter}`;
+      topRestaurantsQueryParams.push(restaurantId);
+      topRestaurantsParamCounter++;
+    }
+
+    const topRestaurantsResult = await query(
+      `SELECT
+        r.id,
+        r.name,
+        r.address,
+        COUNT(DISTINCT o.id) as total_orders,
+        COALESCE(SUM(o.total_amount), 0) as total_revenue,
+        COALESCE(SUM(o.commission_amount), 0) as total_commission,
+        COALESCE(AVG(o.total_amount), 0) as avg_order_value
+      FROM restaurants r
+      LEFT JOIN orders o ON r.id = o.restaurant_id ${topRestaurantsDateFilter}
+      ${topRestaurantsRestaurantFilter}
+      GROUP BY r.id, r.name, r.address
+      ORDER BY total_revenue DESC
+      LIMIT 10`,
+      topRestaurantsQueryParams
+    );
+
+    // 5. Top selling products
+    const topProductsResult = await query(
+      `SELECT
+        p.id,
+        p.name,
+        p.price,
+        r.name as restaurant_name,
+        c.name as category_name,
+        COUNT(oi.id) as times_ordered,
+        COALESCE(SUM(oi.quantity), 0) as total_quantity_sold,
+        COALESCE(SUM(oi.quantity * oi.price_at_order), 0) as total_revenue
+      FROM products p
+      INNER JOIN order_items oi ON p.id = oi.product_id
+      INNER JOIN orders o ON oi.order_id = o.id
+      INNER JOIN restaurants r ON p.restaurant_id = r.id
+      INNER JOIN categories c ON p.category_id = c.id
+      WHERE 1=1 ${dateFilter} ${restaurantFilter}
+      GROUP BY p.id, p.name, p.price, r.name, c.name
+      ORDER BY total_revenue DESC
+      LIMIT 10`,
+      queryParams
+    );
+
+    // 6. Revenue by category
+    const categoryRevenueResult = await query(
+      `SELECT
+        c.name as category_name,
+        COUNT(DISTINCT oi.id) as items_sold,
+        COALESCE(SUM(oi.quantity * oi.price_at_order), 0) as total_revenue
+      FROM categories c
+      INNER JOIN products p ON c.id = p.category_id
+      INNER JOIN order_items oi ON p.id = oi.product_id
+      INNER JOIN orders o ON oi.order_id = o.id
+      WHERE 1=1 ${dateFilter} ${restaurantFilter}
+      GROUP BY c.name
+      ORDER BY total_revenue DESC`,
+      queryParams
+    );
+
+    // 7. Growth metrics (MoM and YoY)
+    const currentMonthResult = await query(
+      `SELECT
+        COALESCE(SUM(total_amount), 0) as revenue,
+        COALESCE(SUM(commission_amount), 0) as commission,
+        COUNT(*) as orders
+      FROM orders
+      WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE) ${restaurantFilter}`,
+      restaurantId ? [restaurantId] : []
+    );
+
+    const previousMonthResult = await query(
+      `SELECT
+        COALESCE(SUM(total_amount), 0) as revenue,
+        COALESCE(SUM(commission_amount), 0) as commission,
+        COUNT(*) as orders
+      FROM orders
+      WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month') ${restaurantFilter}`,
+      restaurantId ? [restaurantId] : []
+    );
+
+    const currentYearResult = await query(
+      `SELECT
+        COALESCE(SUM(total_amount), 0) as revenue,
+        COALESCE(SUM(commission_amount), 0) as commission,
+        COUNT(*) as orders
+      FROM orders
+      WHERE DATE_TRUNC('year', created_at) = DATE_TRUNC('year', CURRENT_DATE) ${restaurantFilter}`,
+      restaurantId ? [restaurantId] : []
+    );
+
+    const previousYearResult = await query(
+      `SELECT
+        COALESCE(SUM(total_amount), 0) as revenue,
+        COALESCE(SUM(commission_amount), 0) as commission,
+        COUNT(*) as orders
+      FROM orders
+      WHERE DATE_TRUNC('year', created_at) = DATE_TRUNC('year', CURRENT_DATE - INTERVAL '1 year') ${restaurantFilter}`,
+      restaurantId ? [restaurantId] : []
+    );
+
+    // Calculate growth percentages
+    const currentMonth = currentMonthResult.rows[0];
+    const previousMonth = previousMonthResult.rows[0];
+    const currentYear = currentYearResult.rows[0];
+    const previousYear = previousYearResult.rows[0];
+
+    const momRevenueGrowth =
+      parseFloat(previousMonth.revenue) > 0
+        ? ((parseFloat(currentMonth.revenue) - parseFloat(previousMonth.revenue)) /
+            parseFloat(previousMonth.revenue)) *
+          100
+        : 0;
+
+    const yoyRevenueGrowth =
+      parseFloat(previousYear.revenue) > 0
+        ? ((parseFloat(currentYear.revenue) - parseFloat(previousYear.revenue)) /
+            parseFloat(previousYear.revenue)) *
+          100
+        : 0;
+
+    // 8. Get active restaurant count
+    const activeRestaurantsResult = await query(
+      `SELECT COUNT(*) as count
+      FROM restaurants
+      WHERE is_open = true ${restaurantId ? `AND id = $1` : ''}`,
+      restaurantId ? [restaurantId] : []
+    );
+
+    // Format response
+    const revenue = revenueResult.rows[0];
+    const ordersByStatus = {};
+    ordersByStatusResult.rows.forEach((row) => {
+      ordersByStatus[row.status] = {
+        count: parseInt(row.count),
+        revenue: parseFloat(row.revenue),
+      };
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        summary: {
+          totalRevenue: parseFloat(revenue.total_revenue),
+          totalCommission: parseFloat(revenue.total_commission),
+          netRevenue: parseFloat(revenue.net_revenue),
+          totalOrders: parseInt(revenue.total_orders),
+          activeRestaurants: parseInt(activeRestaurantsResult.rows[0].count),
+        },
+        ordersByStatus,
+        monthlyTrend: monthlyTrendResult.rows.map((row) => ({
+          month: row.month,
+          revenue: parseFloat(row.revenue),
+          commission: parseFloat(row.commission),
+          orders: parseInt(row.orders),
+        })),
+        topRestaurants: topRestaurantsResult.rows.map((row) => ({
+          id: row.id,
+          name: row.name,
+          address: row.address,
+          totalOrders: parseInt(row.total_orders),
+          totalRevenue: parseFloat(row.total_revenue),
+          totalCommission: parseFloat(row.total_commission),
+          avgOrderValue: parseFloat(row.avg_order_value),
+        })),
+        topProducts: topProductsResult.rows.map((row) => ({
+          id: row.id,
+          name: row.name,
+          price: parseFloat(row.price),
+          restaurantName: row.restaurant_name,
+          categoryName: row.category_name,
+          timesOrdered: parseInt(row.times_ordered),
+          totalQuantitySold: parseInt(row.total_quantity_sold),
+          totalRevenue: parseFloat(row.total_revenue),
+        })),
+        revenueByCategory: categoryRevenueResult.rows.map((row) => ({
+          categoryName: row.category_name,
+          itemsSold: parseInt(row.items_sold),
+          totalRevenue: parseFloat(row.total_revenue),
+        })),
+        growthMetrics: {
+          monthOverMonth: {
+            revenueGrowth: momRevenueGrowth,
+            currentMonth: {
+              revenue: parseFloat(currentMonth.revenue),
+              commission: parseFloat(currentMonth.commission),
+              orders: parseInt(currentMonth.orders),
+            },
+            previousMonth: {
+              revenue: parseFloat(previousMonth.revenue),
+              commission: parseFloat(previousMonth.commission),
+              orders: parseInt(previousMonth.orders),
+            },
+          },
+          yearOverYear: {
+            revenueGrowth: yoyRevenueGrowth,
+            currentYear: {
+              revenue: parseFloat(currentYear.revenue),
+              commission: parseFloat(currentYear.commission),
+              orders: parseInt(currentYear.orders),
+            },
+            previousYear: {
+              revenue: parseFloat(previousYear.revenue),
+              commission: parseFloat(previousYear.commission),
+              orders: parseInt(previousYear.orders),
+            },
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error('Get sales analytics error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to retrieve sales analytics.',
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   toggleUserStatus,
   getSystemStats,
   getCommission,
   updateCommission,
+  getSalesAnalytics,
 };

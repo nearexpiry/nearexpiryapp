@@ -27,6 +27,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminUsers from './pages/admin/Users';
 import AdminRestaurants from './pages/admin/Restaurants';
 import AdminSettings from './pages/admin/Settings';
+import AdminAnalytics from './pages/admin/Analytics';
 import './App.css';
 
 function App() {
@@ -92,6 +93,7 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="restaurants" element={<AdminRestaurants />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
           </Routes>
