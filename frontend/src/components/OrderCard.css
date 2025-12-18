@@ -1,0 +1,379 @@
+.order-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.2s;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.order-id {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.order-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.order-value {
+  font-size: 1rem;
+  color: #111827;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.order-status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.order-card-body {
+  margin-bottom: 1rem;
+}
+
+.order-info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.order-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 1rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+.order-type {
+  text-transform: capitalize;
+}
+
+.order-delivery-info {
+  background-color: #f9fafb;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.delivery-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.delivery-item:last-child {
+  margin-bottom: 0;
+}
+
+.order-items {
+  margin-top: 1rem;
+}
+
+.order-items h4 {
+  font-size: 1rem;
+  color: #374151;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: #f9fafb;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.order-item:last-child {
+  margin-bottom: 0;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.item-name {
+  font-size: 0.938rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+.item-quantity {
+  font-size: 0.875rem;
+  color: #6b7280;
+  background-color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.item-price {
+  font-size: 0.938rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #e5e7eb;
+}
+
+.total-label {
+  font-size: 1.125rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.total-value {
+  font-size: 1.5rem;
+  color: #10b981;
+  font-weight: 700;
+}
+
+.order-commission {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fef3c7;
+  border-radius: 6px;
+}
+
+.commission-label {
+  font-size: 0.938rem;
+  color: #92400e;
+  font-weight: 500;
+}
+
+.commission-value {
+  font-size: 1rem;
+  color: #92400e;
+  font-weight: 700;
+}
+
+.order-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.order-timestamp {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.timestamp-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.timestamp-value {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+.order-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-status-update {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.938rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-status-update:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.btn-status-update:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.938rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background-color: #dc2626;
+}
+
+.btn-cancel:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Cancel Dialog */
+.cancel-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.cancel-dialog {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.cancel-dialog h3 {
+  margin: 0 0 1rem 0;
+  color: #111827;
+  font-size: 1.25rem;
+}
+
+.cancel-dialog p {
+  margin: 0 0 0.75rem 0;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.cancel-warning {
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 0.938rem;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  justify-content: flex-end;
+}
+
+.btn-dialog-cancel {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.938rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-dialog-cancel:hover {
+  background-color: #e5e7eb;
+}
+
+.btn-dialog-confirm {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.938rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-dialog-confirm:hover {
+  background-color: #dc2626;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .order-card {
+    padding: 1rem;
+  }
+
+  .order-info-row {
+    grid-template-columns: 1fr;
+  }
+
+  .order-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .order-actions {
+    width: 100%;
+  }
+
+  .btn-status-update,
+  .btn-cancel {
+    flex: 1;
+  }
+}
