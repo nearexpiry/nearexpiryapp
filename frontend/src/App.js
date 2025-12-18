@@ -14,6 +14,7 @@ import RestaurantProfile from './pages/restaurant/RestaurantProfile';
 import Products from './pages/restaurant/Products';
 import ProductForm from './pages/restaurant/ProductForm';
 import Orders from './pages/restaurant/Orders';
+import Sales from './pages/restaurant/Sales';
 import BrowseProducts from './pages/client/BrowseProducts';
 import RestaurantsMap from './pages/client/RestaurantsMap';
 import ProductDetail from './pages/client/ProductDetail';
@@ -70,8 +71,8 @@ function App() {
               <Route path="products/new" element={<ProductForm />} />
               <Route path="products/edit/:id" element={<ProductForm />} />
               <Route path="orders" element={<Orders />} />
+              <Route path="sales" element={<Sales />} />
               {/* Add more restaurant routes here as needed */}
-              {/* <Route path="sales" element={<RestaurantSales />} /> */}
             </Route>
           </Routes>
           </div>
