@@ -15,4 +15,28 @@ router.post(
   orderController.createOrder
 );
 
+/**
+ * @route   GET /api/orders/restaurant/my-orders
+ * @desc    Get all orders for authenticated restaurant
+ * @access  Protected - Restaurant role only
+ */
+router.get(
+  '/restaurant/my-orders',
+  verifyToken,
+  roleCheck('restaurant'),
+  orderController.getRestaurantOrders
+);
+
+/**
+ * @route   PATCH /api/orders/:id/status
+ * @desc    Update order status
+ * @access  Protected - Restaurant role only
+ */
+router.patch(
+  '/:id/status',
+  verifyToken,
+  roleCheck('restaurant'),
+  orderController.updateOrderStatus
+);
+
 module.exports = router;
