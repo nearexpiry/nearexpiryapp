@@ -7,6 +7,12 @@ const Home = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  // Debug logging
+  console.log('Home page - isAuthenticated:', isAuthenticated);
+  console.log('Home page - user:', user);
+  console.log('Home page - user role:', user?.role);
+  console.log('Home page - role check for client:', user?.role === 'client');
+
   return (
     <div className="home-container">
       <div className="home-content">
