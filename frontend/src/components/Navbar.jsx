@@ -21,15 +21,18 @@ const Navbar = () => {
         </Link>
 
         <div className="navbar-menu">
-          {/* Public links visible to everyone */}
-          <Link to="/browse" className="navbar-link">
-            Browse Products
-          </Link>
-          <Link to="/restaurants" className="navbar-link">
-            Restaurants
-          </Link>
-
-          <CartIcon />
+          {/* Links visible to clients and non-authenticated users */}
+          {(!isAuthenticated || user?.role === 'client') && (
+            <>
+              <Link to="/browse" className="navbar-link">
+                Browse Products
+              </Link>
+              <Link to="/restaurants" className="navbar-link">
+                Restaurants
+              </Link>
+              <CartIcon />
+            </>
+          )}
 
           {isAuthenticated ? (
             <>
