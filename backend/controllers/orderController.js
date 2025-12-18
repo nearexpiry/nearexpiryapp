@@ -495,8 +495,101 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+/**
+ * Get all orders for authenticated client
+ * GET /api/orders/client/my-orders
+ * @access Protected - Client role only
+ */
+const getClientOrders = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { status } = req.query;
+
+    // Build query with filters
+    let queryText = `
+      SELECT
+        o.id, o.client_id, o.restaurant_id, o.total_amount, o.commission_amount,
+        o.status, o.order_type, o.delivery_address, o.delivery_phone,
+        o.created_at, o.updated_at,
+        r.name as restaurant_name, r.address as restaurant_address, r.phone as restaurant_phone
+      FROM orders o
+      JOIN restaurants r ON o.restaurant_id = r.id
+      WHERE o.client_id = $1
+    `;
+
+    const queryParams = [userId];
+    let paramCounter = 2;
+
+    // Add status filter if provided
+    if (status) {
+      queryText += ` AND o.status = $${paramCounter}`;
+      queryParams.push(status);
+      paramCounter++;
+    }
+
+    // Sort by created_at desc
+    queryText += ' ORDER BY o.created_at DESC';
+
+    const ordersResult = await query(queryText, queryParams);
+
+    // Fetch order items for all orders
+    const orders = await Promise.all(
+      ordersResult.rows.map(async (order) => {
+        const itemsResult = await query(
+          `SELECT
+            oi.id, oi.product_id, oi.quantity, oi.price_at_order,
+            p.name as product_name, p.image_url as product_image
+          FROM order_items oi
+          JOIN products p ON oi.product_id = p.id
+          WHERE oi.order_id = $1`,
+          [order.id]
+        );
+
+        return {
+          id: order.id,
+          clientId: order.client_id,
+          restaurantId: order.restaurant_id,
+          restaurantName: order.restaurant_name,
+          restaurantAddress: order.restaurant_address,
+          restaurantPhone: order.restaurant_phone,
+          totalAmount: parseFloat(order.total_amount),
+          commissionAmount: parseFloat(order.commission_amount),
+          status: order.status,
+          orderType: order.order_type,
+          deliveryAddress: order.delivery_address,
+          deliveryPhone: order.delivery_phone,
+          items: itemsResult.rows.map(item => ({
+            id: item.id,
+            productId: item.product_id,
+            productName: item.product_name,
+            productImage: item.product_image,
+            quantity: item.quantity,
+            priceAtOrder: parseFloat(item.price_at_order),
+          })),
+          createdAt: order.created_at,
+          updatedAt: order.updated_at,
+        };
+      })
+    );
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        orders,
+      },
+    });
+  } catch (error) {
+    console.error('Get client orders error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch orders. Please try again.',
+    });
+  }
+};
+
 module.exports = {
   createOrder,
   getRestaurantOrders,
+  getClientOrders,
   updateOrderStatus,
 };

@@ -19,6 +19,8 @@ import RestaurantsMap from './pages/client/RestaurantsMap';
 import ProductDetail from './pages/client/ProductDetail';
 import Cart from './pages/client/Cart';
 import Checkout from './pages/client/Checkout';
+import OrderHistory from './pages/client/OrderHistory';
+import OrderDetails from './pages/client/OrderDetails';
 import './App.css';
 
 function App() {
@@ -41,6 +43,8 @@ function App() {
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/orders" element={<OrderHistory />} />
+            <Route path="/orders/:id" element={<OrderDetails />} />
 
             {/* Protected Routes */}
             <Route

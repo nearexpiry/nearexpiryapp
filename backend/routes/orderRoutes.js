@@ -28,6 +28,18 @@ router.get(
 );
 
 /**
+ * @route   GET /api/orders/client/my-orders
+ * @desc    Get all orders for authenticated client
+ * @access  Protected - Client role only
+ */
+router.get(
+  '/client/my-orders',
+  verifyToken,
+  roleCheck('client'),
+  orderController.getClientOrders
+);
+
+/**
  * @route   PATCH /api/orders/:id/status
  * @desc    Update order status
  * @access  Protected - Restaurant role only
