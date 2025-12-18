@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import React, { useState, useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -13,6 +13,21 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
+// Component to handle map movements
+function MapController({ center, zoom }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (center) {
+      map.flyTo(center, zoom || 13, {
+        duration: 1.5
+      });
+    }
+  }, [center, zoom, map]);
+
+  return null;
+}
+
 const RestaurantsMap = () => {
   const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
@@ -21,7 +36,9 @@ const RestaurantsMap = () => {
   const [error, setError] = useState(null);
   const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [mapCenter, setMapCenter] = useState([40.7128, -74.006]); // Default to NYC
+  const [mapCenter, setMapCenter] = useState([0, 0]); // Default to world center
+  const [mapZoom, setMapZoom] = useState(2); // Start zoomed out
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
     fetchRestaurants();
@@ -36,7 +53,11 @@ const RestaurantsMap = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setMapCenter([position.coords.latitude, position.coords.longitude]);
+          if (initialLoad) {
+            setMapCenter([position.coords.latitude, position.coords.longitude]);
+            setMapZoom(13);
+            setInitialLoad(false);
+          }
         },
         (error) => {
           console.log('Geolocation error:', error);
@@ -95,6 +116,9 @@ const RestaurantsMap = () => {
   const handleRestaurantClick = (restaurant) => {
     if (restaurant.latitude && restaurant.longitude) {
       setMapCenter([restaurant.latitude, restaurant.longitude]);
+      setMapZoom(15);
+      // Scroll to map
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -103,9 +127,9 @@ const RestaurantsMap = () => {
     (r) => r.latitude && r.longitude
   );
 
-  // Calculate map center based on filtered restaurants
+  // Calculate map center based on filtered restaurants on initial load
   useEffect(() => {
-    if (restaurantsWithCoords.length > 0) {
+    if (restaurantsWithCoords.length > 0 && initialLoad) {
       const avgLat =
         restaurantsWithCoords.reduce((sum, r) => sum + r.latitude, 0) /
         restaurantsWithCoords.length;
@@ -113,8 +137,10 @@ const RestaurantsMap = () => {
         restaurantsWithCoords.reduce((sum, r) => sum + r.longitude, 0) /
         restaurantsWithCoords.length;
       setMapCenter([avgLat, avgLng]);
+      setMapZoom(10);
+      setInitialLoad(false);
     }
-  }, [restaurantsWithCoords.length]);
+  }, [restaurantsWithCoords.length, initialLoad]);
 
   if (loading) {
     return (
@@ -173,10 +199,11 @@ const RestaurantsMap = () => {
         <div className="map-container">
           <MapContainer
             center={mapCenter}
-            zoom={13}
+            zoom={mapZoom}
             scrollWheelZoom={true}
             style={{ height: '500px', width: '100%' }}
           >
+            <MapController center={mapCenter} zoom={mapZoom} />
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
