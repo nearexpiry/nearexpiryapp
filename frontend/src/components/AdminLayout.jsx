@@ -47,6 +47,14 @@ const AdminLayout = () => {
           </NavLink>
 
           <NavLink
+            to="/admin/analytics"
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
+            <span className="nav-icon">📈</span>
+            {sidebarOpen && <span className="nav-text">Analytics</span>}
+          </NavLink>
+
+          <NavLink
             to="/admin/settings"
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >

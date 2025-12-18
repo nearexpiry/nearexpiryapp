@@ -63,4 +63,16 @@ router.put(
   adminController.updateCommission
 );
 
+/**
+ * @route   GET /api/admin/analytics
+ * @desc    Get comprehensive sales analytics
+ * @access  Protected - Admin role only
+ */
+router.get(
+  '/analytics',
+  verifyToken,
+  roleCheck('admin'),
+  adminController.getSalesAnalytics
+);
+
 module.exports = router;
