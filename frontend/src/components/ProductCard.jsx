@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
+  const { addToCart, restaurantId, isInCart, getProductQuantity } = useCart();
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
 
   const getDaysUntilExpiry = (expiryDate) => {
     const today = new Date();
@@ -36,6 +40,39 @@ const ProductCard = ({ product }) => {
     navigate(`/product/${product.id}`);
   };
 
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // Prevent card click
+
+    // Check if product is out of stock
+    if (product.quantity === 0) {
+      setNotificationMessage('Product is out of stock');
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 3000);
+      return;
+    }
+
+    // Check if already in cart and at max quantity
+    const currentQuantity = getProductQuantity(product.id);
+    if (currentQuantity >= product.quantity) {
+      setNotificationMessage('Maximum quantity already in cart');
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 3000);
+      return;
+    }
+
+    const result = addToCart(product, 1);
+
+    if (result.success) {
+      setNotificationMessage('Added to cart!');
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 2000);
+    } else {
+      setNotificationMessage(result.message);
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 3000);
+    }
+  };
+
   return (
     <div className="product-card" onClick={handleCardClick}>
       <div className="product-card-image">
@@ -64,6 +101,39 @@ const ProductCard = ({ product }) => {
           </span>
         </div>
         <p className="product-card-date">Expires: {formatDate(product.expiryDate)}</p>
+
+        <div className="product-card-footer">
+          <span className="product-card-stock">
+            {product.quantity > 0 ? `${product.quantity} available` : 'Out of stock'}
+          </span>
+          <button
+            onClick={handleAddToCart}
+            className={`product-card-add-btn ${
+              product.quantity === 0 ||
+              (restaurantId && product.restaurantId !== restaurantId)
+                ? 'disabled'
+                : ''
+            }`}
+            disabled={
+              product.quantity === 0 ||
+              (restaurantId && product.restaurantId !== restaurantId)
+            }
+          >
+            {restaurantId && product.restaurantId !== restaurantId
+              ? 'Different Restaurant'
+              : product.quantity === 0
+              ? 'Out of Stock'
+              : isInCart(product.id)
+              ? 'Add More'
+              : 'Add to Cart'}
+          </button>
+        </div>
+
+        {showNotification && (
+          <div className="product-card-notification">
+            {notificationMessage}
+          </div>
+        )}
       </div>
     </div>
   );
