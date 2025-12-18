@@ -528,6 +528,7 @@ const getAllProducts = async (req, res) => {
     const {
       search,
       category,
+      restaurant_id,
       minPrice,
       maxPrice,
       sortBy = 'created_desc',
@@ -544,6 +545,13 @@ const getAllProducts = async (req, res) => {
     const conditions = ['p.is_active = true', 'r.is_open = true'];
     const params = [];
     let paramIndex = 1;
+
+    // Filter by restaurant_id
+    if (restaurant_id) {
+      conditions.push(`p.restaurant_id = $${paramIndex}`);
+      params.push(restaurant_id);
+      paramIndex++;
+    }
 
     // Search by product name
     if (search && search.trim()) {
