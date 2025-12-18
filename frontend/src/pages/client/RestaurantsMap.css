@@ -185,40 +185,43 @@
 
 .restaurant-info {
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .restaurant-info h3 {
   font-size: 20px;
   font-weight: 600;
   color: #333;
-  margin: 0 0 10px 0;
+  margin: 0;
 }
 
 .restaurant-description {
   font-size: 14px;
   color: #666;
-  margin: 0 0 10px 0;
+  margin: 0;
   line-height: 1.5;
 }
 
 .restaurant-address {
   font-size: 14px;
   color: #666;
-  margin: 5px 0;
+  margin: 0;
 }
 
 .restaurant-phone {
   font-size: 14px;
   color: #666;
-  margin: 5px 0;
+  margin: 0;
 }
 
 .restaurant-footer {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 15px;
-  padding-top: 15px;
+  margin-top: 8px;
+  padding-top: 12px;
   border-top: 1px solid #eee;
 }
 
