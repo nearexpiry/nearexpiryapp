@@ -29,6 +29,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const clientRoutes = require('./routes/clientRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const salesRoutes = require('./routes/salesRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -57,6 +58,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/client', clientRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/sales', salesRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 handler
 app.use((req, res) => {
