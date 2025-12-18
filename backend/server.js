@@ -27,6 +27,7 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const clientRoutes = require('./routes/clientRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -53,6 +54,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/client', clientRoutes);
+app.use('/api/orders', orderRoutes);
 
 // 404 handler
 app.use((req, res) => {

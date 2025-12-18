@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import RestaurantDashboardLayout from './components/RestaurantDashboardLayout';
@@ -15,15 +16,18 @@ import ProductForm from './pages/restaurant/ProductForm';
 import BrowseProducts from './pages/client/BrowseProducts';
 import RestaurantsMap from './pages/client/RestaurantsMap';
 import ProductDetail from './pages/client/ProductDetail';
+import Cart from './pages/client/Cart';
+import Checkout from './pages/client/Checkout';
 import './App.css';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="App">
-          <Navbar />
-          <Routes>
+        <CartProvider>
+          <div className="App">
+            <Navbar />
+            <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -34,6 +38,8 @@ function App() {
             <Route path="/browse" element={<BrowseProducts />} />
             <Route path="/restaurants" element={<RestaurantsMap />} />
             <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
 
             {/* Protected Routes */}
             <Route
@@ -63,7 +69,8 @@ function App() {
               {/* <Route path="sales" element={<RestaurantSales />} /> */}
             </Route>
           </Routes>
-        </div>
+          </div>
+        </CartProvider>
       </AuthProvider>
     </Router>
   );
