@@ -18,6 +18,21 @@ docker --version
 docker compose version
 ```
 
+### Windows Compatibility
+
+✅ **This Docker setup is fully compatible with Windows!**
+
+The application includes special handling for Windows line-ending issues:
+- `.gitattributes` ensures shell scripts use Unix (LF) line endings
+- Dockerfile automatically converts any CRLF to LF line endings
+- No manual configuration needed
+
+**Note**: If you cloned the repository before the `.gitattributes` file was added, you may need to refresh your line endings:
+```bash
+git rm --cached -r .
+git reset --hard
+```
+
 ## Quick Start
 
 ### ⚡ Option 1: Automated Startup (Easiest)
@@ -287,6 +302,31 @@ If you see "The server does not support SSL connections" error:
 This happens when `NODE_ENV=production` but PostgreSQL doesn't have SSL configured. The docker-compose.yml uses `NODE_ENV=development` by default to avoid this.
 
 **Solution**: Verify that `NODE_ENV=development` in docker-compose.yml (line 36-38). If you need production mode with a local database, update the DATABASE_URL to include `?sslmode=disable`.
+
+### Windows: "docker-entrypoint.sh not found" Error
+
+If you see this error on Windows:
+```
+exec /usr/local/bin/docker-entrypoint.sh: no such file or directory
+```
+
+**Cause**: Line ending mismatch (Windows CRLF vs Unix LF)
+
+**Solution**:
+1. The repository includes `.gitattributes` to handle this automatically
+2. If you cloned before this was added, refresh your checkout:
+   ```bash
+   git rm --cached -r .
+   git reset --hard
+   ```
+
+3. Rebuild the Docker image:
+   ```bash
+   docker compose build --no-cache backend
+   docker compose up
+   ```
+
+The Dockerfile automatically converts line endings, so this should work after rebuilding.
 
 ### Build fails
 
