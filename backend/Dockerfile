@@ -14,8 +14,10 @@ RUN npm install && npm cache clean --force
 COPY . .
 
 # Copy and set permissions for entrypoint script
+# Convert Windows line endings (CRLF) to Unix (LF) for Windows compatibility
 COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh && \
+    chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Expose port
 EXPOSE 5003
