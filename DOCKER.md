@@ -89,9 +89,11 @@ That's it! The application will:
 
 Once all services are running (look for "Starting application..." in logs):
 
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:5000
-- **PostgreSQL**: localhost:5432
+- **Frontend**: http://localhost:8080
+- **Backend API**: http://localhost:8000
+- **PostgreSQL**: Not exposed (internal only - accessible within Docker network)
+
+> **Note**: Ports can be customized via `.env` file if 8080 or 8000 are already in use.
 
 ### 5. Default login credentials
 
@@ -175,27 +177,30 @@ The application consists of three main services:
 │       ▲                                              │
 └───────┼──────────────────────────────────────────────┘
         │
-   localhost:3000
+   localhost:8080
 ```
 
 ### Services
 
 1. **PostgreSQL Database** (`postgres`)
    - Image: `postgres:15-alpine`
-   - Port: 5432
+   - Internal Port: 5432 (not exposed to host)
    - Data persisted in Docker volume `postgres_data`
    - Auto-initialized with schema and seed data
+   - Only accessible within Docker network (prevents port conflicts)
 
 2. **Backend API** (`backend`)
    - Built from `./backend/Dockerfile`
-   - Port: 5000
+   - Internal Port: 5000
+   - Host Port: 8000 (configurable via `BACKEND_PORT`)
    - Node.js/Express server
    - Automatically waits for database to be ready
    - Runs database initialization on first start
 
 3. **Frontend** (`frontend`)
    - Built from `./frontend/Dockerfile`
-   - Port: 3000 (mapped to internal port 80)
+   - Internal Port: 80
+   - Host Port: 8080 (configurable via `FRONTEND_PORT`)
    - React SPA served by Nginx
    - Production-optimized build
 
@@ -231,14 +236,28 @@ Consider these changes for production:
 
 ### Port already in use
 
-If you see "port already allocated" error:
+If you see "port already allocated" error, you can easily change the ports:
 
+**Option 1: Use .env file (Recommended)**
 ```bash
-# Change ports in docker-compose.yml
-# For example, change "3000:80" to "3001:80" for frontend
+# Create or edit .env file
+echo "FRONTEND_PORT=8081" >> .env
+echo "BACKEND_PORT=8001" >> .env
 ```
 
-Or stop the conflicting service on your host machine.
+**Option 2: Set environment variables**
+```bash
+FRONTEND_PORT=8081 BACKEND_PORT=8001 docker compose up
+```
+
+**Option 3: Stop the conflicting service**
+```bash
+# Find what's using the port
+lsof -i :8080  # or :8000
+# Then stop that service
+```
+
+The default ports (Frontend: 8080, Backend: 8000) are chosen to minimize conflicts with common development tools.
 
 ### Database connection failed
 
@@ -282,7 +301,7 @@ Check that `REACT_APP_API_URL` is set correctly:
 docker compose exec frontend env | grep REACT_APP
 ```
 
-Should show: `REACT_APP_API_URL=http://localhost:5000/api`
+Should show: `REACT_APP_API_URL=http://localhost:8000/api` (or your custom backend port)
 
 ### Cloudinary uploads not working
 
@@ -335,9 +354,9 @@ Images are stored in Cloudinary, not in Docker containers. They persist independ
 |----------|-------------|---------|
 | `EMAIL_HOST` | SMTP server | `smtp.gmail.com` |
 | `EMAIL_PORT` | SMTP port | `587` |
-| `FRONTEND_PORT` | Frontend port on host | `3000` |
-| `BACKEND_PORT` | Backend port on host | `5000` |
-| `POSTGRES_PORT` | PostgreSQL port on host | `5432` |
+| `FRONTEND_PORT` | Frontend port on host | `8080` |
+| `BACKEND_PORT` | Backend port on host | `8000` |
+| `POSTGRES_PORT` | PostgreSQL port on host (if exposed) | `54320` |
 
 ## Health Checks
 
@@ -359,8 +378,8 @@ Healthy services show `(healthy)` in the status column.
 After successfully running the application:
 
 1. **Create accounts** for different user types (client, restaurant, admin)
-2. **Explore the API** at http://localhost:5000/api
-3. **Check the application** at http://localhost:3000
+2. **Explore the API** at http://localhost:8000/api
+3. **Check the application** at http://localhost:8080
 4. **Read API documentation** in `README.md`
 5. **Review authentication** in `AUTH_IMPLEMENTATION.md`
 

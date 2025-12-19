@@ -62,7 +62,7 @@ The easiest way to run the application is using Docker:
 **Steps:**
 1. Copy `.env.example` to `.env` and configure your credentials
 2. Run `docker compose up`
-3. Access the app at http://localhost:3000
+3. Access the app at http://localhost:8080
 
 **📖 For detailed Docker instructions, see [DOCKER.md](DOCKER.md)**
 
