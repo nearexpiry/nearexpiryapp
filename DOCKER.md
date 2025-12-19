@@ -313,6 +313,39 @@ docker compose exec frontend env | grep REACT_APP
 
 Should show: `REACT_APP_API_URL=http://localhost:8000/api` (or your custom backend port)
 
+If the URL is incorrect or you changed ports, rebuild the frontend:
+
+```bash
+docker compose up --build frontend
+```
+
+**Note**: React apps bake environment variables into the build at build time, so you must rebuild after changing `REACT_APP_API_URL`.
+
+### CORS Errors
+
+If you see CORS errors like "No 'Access-Control-Allow-Origin' header":
+
+```
+Access to XMLHttpRequest at 'http://localhost:8000/api/...' from origin 'http://localhost:8080'
+has been blocked by CORS policy
+```
+
+**Common Causes**:
+1. Frontend port changed but backend CORS not updated
+2. Using wrong API URL in frontend code
+
+**Solutions**:
+1. Verify backend allows your frontend origin (check backend/server.js:9-15)
+2. Restart backend container: `docker compose restart backend`
+3. Check backend logs: `docker compose logs backend | grep CORS`
+
+The backend is configured to allow:
+- `http://localhost:3000` (manual setup)
+- `http://localhost:3001` (alternative port)
+- `http://localhost:8080` (Docker default)
+- `http://localhost:8081` (Docker alternative)
+- Value of `FRONTEND_URL` env variable
+
 ### Cloudinary uploads not working
 
 1. Verify Cloudinary credentials in `.env`
