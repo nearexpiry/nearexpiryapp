@@ -172,7 +172,7 @@ The application consists of three main services:
 │  ┌────────────┐  ┌────────────┐  ┌──────────────┐  │
 │  │  Frontend  │  │  Backend   │  │  PostgreSQL  │  │
 │  │   (Nginx)  │◄─┤  (Node.js) │◄─┤   Database   │  │
-│  │   :80      │  │   :5000    │  │   :5432      │  │
+│  │   :80      │  │   :5003    │  │   :5432      │  │
 │  └────────────┘  └────────────┘  └──────────────┘  │
 │       ▲                                              │
 └───────┼──────────────────────────────────────────────┘
@@ -191,7 +191,7 @@ The application consists of three main services:
 
 2. **Backend API** (`backend`)
    - Built from `./backend/Dockerfile`
-   - Internal Port: 5000
+   - Internal Port: 5003
    - Host Port: 8000 (configurable via `BACKEND_PORT`)
    - Node.js/Express server
    - Automatically waits for database to be ready
