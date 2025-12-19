@@ -33,7 +33,9 @@ services:
     container_name: nearexpiry_backend
     environment:
       - PORT=5000
-      - NODE_ENV=production
+      # Use development mode to disable SSL for local PostgreSQL
+      # For production with SSL-enabled database, set NODE_ENV=production
+      - NODE_ENV=development
       - DATABASE_URL=postgresql://nearexpiry_user:nearexpiry_pass@postgres:5432/nearexpiry
       - JWT_SECRET=${JWT_SECRET:-your_jwt_secret_key_change_this_in_production}
       - JWT_EXPIRE=7d

@@ -214,10 +214,12 @@ All services communicate through a Docker bridge network (`nearexpiry-network`).
 
 The current `docker-compose.yml` is configured for easy development:
 
+- `NODE_ENV=development` (disables SSL for local PostgreSQL)
 - Ports are exposed to host machine
 - Backend has volume mount for hot-reload (optional)
 - Logs are visible in console
 - Services restart automatically
+- PostgreSQL without SSL (suitable for local development)
 
 ### For Production Deployment
 
@@ -227,8 +229,8 @@ Consider these changes for production:
 2. **Use Docker secrets** for sensitive data
 3. **Add reverse proxy** (Nginx/Traefik) with SSL
 4. **Remove volume mounts** for backend
-5. **Set NODE_ENV=production**
-6. **Use production-grade database** (managed PostgreSQL)
+5. **Set NODE_ENV=production** (enables SSL for database connections)
+6. **Use production-grade database** (managed PostgreSQL with SSL)
 7. **Configure log aggregation**
 8. **Set up monitoring** (health checks, metrics)
 
@@ -277,6 +279,14 @@ If backend can't connect to database:
    ```bash
    docker compose exec backend npm run db:test
    ```
+
+### SSL Connection Error
+
+If you see "The server does not support SSL connections" error:
+
+This happens when `NODE_ENV=production` but PostgreSQL doesn't have SSL configured. The docker-compose.yml uses `NODE_ENV=development` by default to avoid this.
+
+**Solution**: Verify that `NODE_ENV=development` in docker-compose.yml (line 36-38). If you need production mode with a local database, update the DATABASE_URL to include `?sslmode=disable`.
 
 ### Build fails
 
