@@ -51,7 +51,28 @@ nearexpiryapp/
 
 ## Getting Started
 
-### Prerequisites
+### 🐳 Quick Start with Docker (Recommended)
+
+The easiest way to run the application is using Docker:
+
+**Prerequisites:**
+- Docker (v20.10+)
+- Docker Compose (v2.0+)
+
+**Steps:**
+1. Copy `.env.example` to `.env` and configure your credentials
+2. Run `docker compose up`
+3. Access the app at http://localhost:3000
+
+**📖 For detailed Docker instructions, see [DOCKER.md](DOCKER.md)**
+
+---
+
+### Manual Setup (Alternative)
+
+If you prefer to run without Docker:
+
+**Prerequisites:**
 - Node.js (v14 or higher)
 - PostgreSQL (v12 or higher)
 - npm or yarn
