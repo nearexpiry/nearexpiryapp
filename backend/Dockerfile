@@ -1,5 +1,5 @@
 # Backend Dockerfile for Near Expiry App
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Set working directory
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies (including dev dependencies for db setup scripts)
-RUN npm ci && npm cache clean --force
+RUN npm install && npm cache clean --force
 
 # Copy application code
 COPY . .

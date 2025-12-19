@@ -1,6 +1,6 @@
 # Frontend Dockerfile for Near Expiry App
 # Stage 1: Build the React application
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 
 # Set working directory
 WORKDIR /app
@@ -8,8 +8,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci && npm cache clean --force
+# Install dependencies (use install instead of ci to handle lock file sync)
+RUN npm install && npm cache clean --force
 
 # Copy application code
 COPY . .
