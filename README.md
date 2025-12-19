@@ -105,11 +105,11 @@ If you prefer to run without Docker:
    npm run dev
    ```
 
-   The backend API will be available at `http://localhost:5000`
+   The backend API will be available at `http://localhost:5003` (or your configured PORT)
 
 6. Test the health check endpoint:
    ```bash
-   curl http://localhost:5000/health
+   curl http://localhost:5003/health
    ```
 
 ### Frontend Setup
