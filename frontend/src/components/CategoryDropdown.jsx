@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 import './CategoryDropdown.css';
 
 const CategoryDropdown = ({ value, onChange, error }) => {
@@ -15,7 +16,7 @@ const CategoryDropdown = ({ value, onChange, error }) => {
       setLoading(true);
       setFetchError(null);
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/categories`);
+      const response = await fetch(`${API_URL}/categories`);
       const data = await response.json();
 
       if (data.status === 'success') {

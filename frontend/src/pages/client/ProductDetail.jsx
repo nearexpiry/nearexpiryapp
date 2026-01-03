@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_URL } from '../../config';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
@@ -19,7 +20,7 @@ const ProductDetail = () => {
       setError(null);
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/products/${id}`
+        `${API_URL}/products/${id}`
       );
 
       const data = await response.json();

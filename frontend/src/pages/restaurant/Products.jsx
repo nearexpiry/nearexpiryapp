@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../../config';
 import './Products.css';
 
 const Products = () => {
@@ -24,7 +25,7 @@ const Products = () => {
       }
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/products/my-products`,
+        `${API_URL}/products/my-products`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -55,7 +56,7 @@ const Products = () => {
       }
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/products/${productId}`,
+        `${API_URL}/products/${productId}`,
         {
           method: 'DELETE',
           headers: {

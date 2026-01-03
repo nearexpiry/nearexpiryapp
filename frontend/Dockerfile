@@ -5,6 +5,10 @@ FROM node:20-alpine AS build
 # Set working directory
 WORKDIR /app
 
+# Accept build-time environment variables
+ARG REACT_APP_API_URL=http://localhost:8000/api
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 # Copy package files
 COPY package*.json ./
 
@@ -14,7 +18,7 @@ RUN npm install && npm cache clean --force
 # Copy application code
 COPY . .
 
-# Build the application
+# Build the application with environment variable baked in
 RUN npm run build
 
 # Stage 2: Serve with nginx

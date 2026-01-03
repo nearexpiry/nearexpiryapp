@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { API_URL } from '../../config';
 import './RestaurantsMap.css';
 
 // Fix for default markers not showing
@@ -72,7 +73,7 @@ const RestaurantsMap = () => {
       setError(null);
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/client/restaurants`
+        `${API_URL}/client/restaurants`
       );
 
       const data = await response.json();

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { API_URL } from '../config';
 import './ImageUpload.css';
 
 const ImageUpload = ({
@@ -71,8 +72,8 @@ const ImageUpload = ({
 
       // Determine endpoint based on upload type
       const endpoint = uploadType === 'logo'
-        ? `${process.env.REACT_APP_API_URL}/upload/logo`
-        : `${process.env.REACT_APP_API_URL}/upload/product-image`;
+        ? `${API_URL}/upload/logo`
+        : `${API_URL}/upload/product-image`;
 
       // Upload with progress tracking
       const xhr = new XMLHttpRequest();

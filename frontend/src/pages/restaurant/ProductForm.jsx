@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { API_URL } from '../../config';
 import ImageUpload from '../../components/ImageUpload';
 import CategoryDropdown from '../../components/CategoryDropdown';
 import './ProductForm.css';
@@ -40,7 +41,7 @@ const ProductForm = () => {
       }
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/products/${id}`,
+        `${API_URL}/products/${id}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -166,8 +167,8 @@ const ProductForm = () => {
       }
 
       const url = isEditMode
-        ? `${process.env.REACT_APP_API_URL}/products/${id}`
-        : `${process.env.REACT_APP_API_URL}/products`;
+        ? `${API_URL}/products/${id}`
+        : `${API_URL}/products`;
 
       const method = isEditMode ? 'PUT' : 'POST';
 
