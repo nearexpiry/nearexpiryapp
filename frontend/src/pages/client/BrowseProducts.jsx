@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { API_URL } from '../../config';
 import ProductCard from '../../components/ProductCard';
 import './BrowseProducts.css';
 
@@ -55,7 +56,7 @@ const BrowseProducts = () => {
   const fetchCategories = async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/categories`
+        `${API_URL}/categories`
       );
       const data = await response.json();
 
@@ -82,7 +83,7 @@ const BrowseProducts = () => {
       params.append('limit', 12);
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/client/products?${params.toString()}`
+        `${API_URL}/client/products?${params.toString()}`
       );
 
       const data = await response.json();
