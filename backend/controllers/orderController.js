@@ -1,4 +1,5 @@
 const { query, getClient } = require('../db/db');
+const { sendOrderConfirmationEmail, sendOrderStatusUpdateEmail } = require('../utils/emailService');
 
 /**
  * Create new order
@@ -201,6 +202,23 @@ const createOrder = async (req, res) => {
       quantity: item.quantity,
       priceAtOrder: parseFloat(item.price_at_order),
     }));
+
+    // Send order confirmation email to customer (non-blocking)
+    const customerResult = await client.query('SELECT email FROM users WHERE id = $1', [userId]);
+    if (customerResult.rows.length > 0) {
+      const customerEmail = customerResult.rows[0].email;
+      sendOrderConfirmationEmail(customerEmail, {
+        orderId: completeOrder.id,
+        restaurantName: completeOrder.restaurant_name,
+        totalAmount: parseFloat(completeOrder.total_amount),
+        items: items_list,
+        orderType: completeOrder.order_type,
+        deliveryAddress: completeOrder.delivery_address,
+      }).catch(error => {
+        console.error('Failed to send order confirmation email:', error);
+        // Don't fail the order creation if email fails
+      });
+    }
 
     res.status(201).json({
       status: 'success',
@@ -463,6 +481,25 @@ const updateOrderStatus = async (req, res) => {
     await client.query('COMMIT');
 
     const updatedOrder = updateResult.rows[0];
+
+    // Send order status update email to customer (non-blocking)
+    const customerEmailResult = await client.query('SELECT email FROM users WHERE id = $1', [updatedOrder.client_id]);
+    const restaurantNameResult = await client.query('SELECT name FROM restaurants WHERE id = $1', [restaurantId]);
+
+    if (customerEmailResult.rows.length > 0 && restaurantNameResult.rows.length > 0) {
+      const customerEmail = customerEmailResult.rows[0].email;
+      const restaurantName = restaurantNameResult.rows[0].name;
+
+      sendOrderStatusUpdateEmail(customerEmail, {
+        orderId: updatedOrder.id,
+        restaurantName: restaurantName,
+        newStatus: newStatus,
+        oldStatus: currentStatus,
+      }).catch(error => {
+        console.error('Failed to send order status update email:', error);
+        // Don't fail the status update if email fails
+      });
+    }
 
     res.status(200).json({
       status: 'success',
