@@ -1,0 +1,342 @@
+﻿
+
+
+
+
+
+
+
+
+
+Graduation Project Report
+
+Report Title Font Size 24 Bold
+
+
+
+
+
+
+
+Students Names and IDs Font Size 16 Bold
+Supervisor Name Font Size 16 Bold
+
+
+
+
+
+
+
+Semester: First 2020/2021 
+
+Date: 10th January 2021
+   
+
+Students' Property Right Declaration and Anti-Plagiarism Statement
+We hereby declare that the work in this graduation project at Yarmouk University is our own except for quotations and summaries which have been duly acknowledged. This work has not been accepted for any degree and is not concurrently submitted for award of other degrees. It is the sole property of Yarmouk University and it is protected under the intellectual property right laws and conventions.
+We hereby declare that this report is our own work except from properly referenced quotations and contains no plagiarism.
+We have read and understood the school's rules on assessment offences, which are available at Yarmouk University Handbook.
+
+
+Students:    
+Name: _________________
+Signature: _______________
+Date:  __________________   
+Name: _________________
+Signature: _______________
+Date:  __________________   
+Name: _________________
+Signature: _______________
+Date:  __________________   
+Name: _________________
+Signature: _______________
+Date:  __________________   
+      
+
+
+Table of Contents
+   Students' Property Right Declaration and Anti-Plagiarism Statement	i
+   List of Tables	iii
+   List of Figures	iv
+   Abstract	v
+   Chapter 1: Introduction	1
+   Chapter 2: Background	2
+   Chapter 3: Design	3
+   Chapter 4: Implementation	5
+   Chapter 5: Results and Discussion	6
+   Chapter 6: Economical, Ethic, and Contemporary Issues	7
+   Chapter 7: Project Management	8
+   Chapter 8: Conclusion and Future Work	9
+   References	10
+   APPENDIX A: User Manual	11
+
+
+
+
+List of Tables
+<TODO: Provide a list for all tables inside the report (Table number, title, and page). >
+Table 1. Table Title .....................................................................................................3
+Table 2. Table Title .....................................................................................................6
+Table 3. Table Title ...................................................................................................10
+   
+
+List of Figures
+<TODO: Provide a list for all figures inside the report (Figure number, title, and page). >
+Figure 1. Figure Title ...................................................................................................3
+Figure 2. Figure Title ...................................................................................................6
+Figure 3. Figure Title ..................................................................................................10
+   
+
+Abstract
+Write 150-300 words to give an overview of your project, Purpose of the project, the problem it tries to solve, and the main idea about your proposed solution, project time period, development process, short description of the final deliverables, acknowledgement. 
+
+
+
+Keywords- Includes 3-5 keywords or phrases
+
+
+<Note: Please note that some of the sections and headings listed below might change based on your program criteria.>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Chapter 1: Introduction
+1.1 Describe the problem you are trying to solve and the motivations behind your project (problem statement and purpose). 
+1.2 Background.
+1.3 Aims and objectives.
+1.4 How has the problem been solved till now?
+1.5 What is your main solution idea? 
+1.6 What are the key technical details of your solution? How did you evaluate your solution? 
+1.7 A list of contributions with short descriptions that you can claim from your work.
+1.8 Provide a high-level figure of your solution describing the main components of the system/solution and the basic interactions between them.
+1.9 Summary of report structure. 
+
+
+
+
+Chapter 2: Background
+2.1 Provide a background of the problem, in easy-to-understand terms (relevant literature research). This should not be tied to your solution. 
+2.2 Provide some context about the problem, and why it is important and where it is used ... etc.
+2.3 Target market and their needs.
+2.4 Potential ethical and/or environmental issues. 
+2.5 Summarize the different approaches currently/previously used to solve the problem. For each approach, there may be multiple references that use the same approach.
+
+   
+
+Chapter 3: Design
+3.1 Design Overview:
+3.1.1 Describe the design of your project to achieve the solution.
+3.1.2 How you plan to address the problem statement.
+3.1.3 Provide a detailed figure of your solution, describing the interaction between the components               in details. Describe one or two scenarios of how the end users will use your solution/system.
+   
+3.2 Design Details:
+This section should have a clear description for the following components:
+   
+3.2.1 Design Specifications
+The required design dimensions, environmental factors, ergonomic factors, aesthetic factors, maintenance, cost, safety, quality, etc.
+
+3.2.2 Design Process 
+Describe the detailed techniques in your solution. For each part of the solution, put it in the context of the overall system or solution - where does it fit, what is its functionality? Do not just give a figure or an algorithm but explain in words what the design behind the method used is. If your method expands some prior method(s), refer to that, and point out the addition that you have done.
+
+3.2.3 Legal Aspects 
+   The legal aspects related to your designed solution. 
+   
+3.2.4 Design Constraints 
+Any constraints/limitation on the design imposed on the solution by the legal aspects, standards, regulations, customers, development organization, limited resources, environmental concerns, performance constraints, social and ethical concerns, security, privacy, etc... 
+   
+3.2.5 Design Standards 
+Any applicable standards that are followed towards the design of your solution and how the standards are acquired. Please refer and list the standards that are used in your design and how they are addressed in the different stages and in your design solution. 
+A list of regional and international standards organizations is provided in the appendix section (A.2). 
+   
+   
+3.2.6 Design Alternatives 
+If there are alternate ways of your design solution, describe them and say why one is better than the others. 
+   
+3.2.7 Safety Consideration 
+Safety in your designed solution. You can also address how to ensure the safety of your team members while implementing the project and the safety of your customers (end users) for your designed solution. 
+   
+3.2.8 Design considerations table. 
+
+   A description of the content in the table can be found in the appendix section (A.1)
+Design considerationProject applicationRelevant location in report   Performance   serviceability   Economic   Environmental   Environmental Sustainability   Manufacturability   Ethical   Health and safety   Social   Political   1.2.7 
+
+Chapter 4: Implementation 
+4.1 Give a precise description of the methods and tools (hardware, software ... etc.) used to implement your solution. 
+4.2 What infrastructure your solution depends on, or is using to accomplish its tasks? 
+4.3 What are the trade-offs that you had to make in your design/implementation? 
+4.4 What are the dependencies/assumptions of your implementation?
+
+
+
+
+
+
+   
+
+Chapter 5: Results and Discussion 
+5.1 Present the results of your work and discuss them in detail and how they are linked to what has been discussed in the design chapter. 
+5.2 Discuss the strengths and weaknesses of your solution/system.
+
+
+   
+
+Chapter 6: Economical, Ethic, and Contemporary Issues 
+6.1 Preliminary Cost Estimation and Justification
+6.2 Relevant Codes of Ethics and Moral Frameworks
+6.3 Ethical Dilemmas and Justification of Proposed Solution
+6.4 Relevant Environmental Considerations
+6.5 Relevance to Jordan and Region (Social, Cultural, and Political)
+6.6 Other Issues and Constraints
+
+
+   
+
+Chapter 7: Project Management
+7.1 Schedule and Time Management of your project 
+7.2 Resource and Cost Management
+7.3 Quality Management
+7.4 Risk Management
+7.5 Project Procurement
+
+
+   
+
+Chapter 8: Conclusion and Future Work
+8.1 Summarize the main contributions of the work.
+8.2 Further future work someone should do to make the solution/system better.
+8.3 Lessons learned.
+
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+
+References
+<TODO: List all the references used in you report by numbering them [1], [2], in their order of appearance. Follow the IEEE citation style guide http://www.ijssst.info/info/IEEE-Citation-StyleGuide.pdf >
+<TODO: Use the references in your text (e.g. This information has been proved before as indicated in [1])>
+
+
+
+   
+
+APPENDIX A: User Manual
+Provide a detailed user manual to explain how to use your solutions with the help of figures, screenshots, or detailed diagrams.
+
+A.1 Guidance on the use of the design consideration table*
+Performance - How is the design to function? What need is it filling? What does it have to do? Is it reliable?
+Serviceability - Is maintenance or repair a concern? If so, can it be easily performed?
+Economic - Is the production and/or use costs considered?
+Environmental - Does this have positive or negative impact to the environment? Are there any environmental effects due to the production, use or end-of-use of the design? Are appropriate materials selected?
+Environmental Sustainability - (Sustainability refers to the practice of having minimal impact on the environment. Completely sustainable practices do not deplete or degrade the environment.) Does the design consider recycling, and using sustainable materials and manufacturing methods? Are renewable energy sources used (such as solar)? Does the product promote sustainable practices?
+Manufacturability - Can the design be economically produced? Can critical elements be inspected?
+Ethical - Has the student followed the code of ethics established by professional organizations such as ASME? Does the design benefit humanity? Have appropriate standards been applied? Are the design documents accurate with claims not overstated?
+Health and safety - Have appropriate codes and standards been applied to prevent harm? Does the design mitigate harmful effects of failure to prevent injury? Does the design directly improve the health and safety of users?
+Social - Does it benefit society? Are there societal implications of the product?
+Political - Are there political implications of the project? What materials or parts would need to be imported? Would this be exported or imported?
+*Information reference: http://faculty.up.edu/lulay/ME481-482/Example-DesignConsiderationTable-13x.pdf. 
+
+
+
+
+
+
+
+A.2 Incorporating Standards in a design project.
+   Some of the Resources for faculty and students researching standards include but are not limited to: 
+1. The National Standards Network (NSSN) that can be accessed at http://www.nssn.org/ .
+2. International Organization for Standardization (ISO)
+3. International Electrotechnical Commission (IEC) standards
+4. The National Institute of Standards and Technology (NIST): guides for medical devices, the low voltage directive, and other sector specific issues as well as more general guides dealing with issues such as product liability and product safety
+5. The IEEE -Standards Association (IEEE-SA): the leading developer of global industry standards in a broad-range of industries, including Power and Energy, Biomedical and Healthcare, Information Technology, Telecommunications, Transportation, Nanotechnology, and Information Assurance
+6. The American Society of Civil Engineers (ASCE)
+7. The American Society of Mechanical Engineers (ASME)
+8. The American Society for Testing and Materials (ASTM)
+9. Occupational health and safety organization (OSHA)
+10. Ministry of labor (Jordan) standards for safety and occupational health. 
+11. Jordan standards and metrology organization (JSMO)
+12. The International Committee for Information Technology Standards (INCITS)
+13. Standards Engineering Society (SES) 
+14. Alliance for Telecommunications Industry Solutions (ATIS)
+15. The International Telecommunication Union (ITU)
+16. National Electrical Manufacturers Association (NEMA)
+17. Website Standards Association (WSA)
+18. The Joint Electron Device Engineering Council (JEDEC) 
+19. The American National Standards Institute (ANSI) 
+20. The Association for Computing Machinery (ACM) 
+21. European Computer Manufacturers Association (ECMA)
+22. CENELEC is the European Committee for Electrotechnical Standardization
+23. Electronic Industries Association of Japan (EIAJ) and the Japan Electronic Industries Development Association (JEIDA)
+*Please note that this is a list to provide some guidance, standards organizations might change based on your discipline. 
+   
+   
+   
+   vi
+   
+   
