@@ -2213,3 +2213,296 @@ Project demonstrates proficiency in React, Node.js, Express, PostgreSQL, Docker,
 
 The results fully validate the Near Expiry platform as a functional, secure, and performant solution to the food waste problem. While limitations exist (payment integration, real-time features, automated testing), the core value is successfully demonstrated. The platform is ready for pilot deployment with real restaurant and client users.
 
+
+# Chapter 2: Background
+
+This chapter provides important context for understanding the Near Expiry platform. It examines the global food waste problem, near-expiry products market, target audiences, existing solutions, relevant technologies, and ethical considerations.
+
+## 2.1 The Food Waste Problem
+
+### 2.1.1 Global Food Waste Statistics
+
+Food waste is one of the biggest environmental and economic problems today. According to the United Nations Environment Programme (UNEP) Food Waste Index Report 2024, approximately **1.05 billion tonnes** of food waste was created globally in 2022, which is about 19% of total food available to consumers [1]. This huge amount includes waste from households (631 million tonnes), food service (290 million tonnes), and retail (148 million tonnes).
+
+The Food and Agriculture Organization (FAO) estimates that roughly one-third of all food produced for human consumption is lost or wasted every year, totaling approximately 1.3 billion tonnes [2]. This waste happens across the entire food supply chain, from agricultural production to final household consumption.
+
+### 2.1.2 Environmental Impact
+
+Food waste creates serious environmental problems:
+
+**Greenhouse Gas Emissions:** When food decomposes in landfills, it produces methane (CH4), a greenhouse gas 25 times stronger than carbon dioxide over a 100-year period. The FAO estimates that food waste contributes approximately **8-10% of global greenhouse gas emissions** [2]. If food waste were a country, it would be the third-largest emitter after China and the United States.
+
+**Resource Waste:** Producing food that ultimately goes to waste represents an enormous waste of resources:
+- **Water**: 250 cubic kilometers of water (equivalent to Lake Geneva's volume three times over)
+- **Land**: 1.4 billion hectares of agricultural land (28% of the world's agricultural area)
+- **Energy**: Significant fossil fuel consumption for farming, processing, transportation, and refrigeration
+
+**Biodiversity Loss:** Agricultural expansion to produce wasted food drives deforestation and habitat destruction, contributing to biodiversity loss.
+
+### 2.1.3 Economic Impact
+
+The economic cost of food waste is estimated at approximately **$1 trillion every year** on a global scale [3]. For restaurants and food service businesses specifically:
+
+- Perishable inventory losses reduce profit margins significantly
+- Near-expiry products often sold at steep discounts or thrown away entirely
+- Disposal costs for unsold food add to operational expenses
+- Regulatory compliance costs for waste management
+
+### 2.1.4 Jordan and Regional Context
+
+In Jordan and the broader Middle East region, food waste presents particular challenges:
+
+**Economic Context:** Jordan faces economic pressures including high unemployment, inflation, and food import dependency. Food waste makes food security challenges worse while valuable resources are discarded.
+
+**Refugee Population:** Jordan hosts significant refugee populations (mainly Syrian and Palestinian), where food affordability is critical. Near-expiry products at reduced prices could improve food access.
+
+**Cultural Context:** Islamic teachings emphasize avoiding waste (israf is discouraged), creating cultural alignment with food waste reduction efforts.
+
+**Climate Factors:** Jordan's water scarcity makes water waste embedded in food waste particularly concerning. The country is one of the most water-scarce nations globally.
+
+## 2.2 Near-Expiry Products
+
+### 2.2.1 Definition and Scope
+
+Near-expiry products are food items approaching their labeled expiration or "best before" dates but remain safe for consumption. Important distinctions:
+
+**"Best Before" vs. "Use By":**
+- **Best Before**: Shows peak quality date; products safe to eat after this date, though quality may decline
+- **Use By**: Safety-related date for highly perishable items; products should not be eaten after this date
+- **Sell By**: Retailer guidance; products remain safe for several days after this date
+
+Near-expiry products typically fall within 1-7 days of their best before date, depending on product type.
+
+### 2.2.2 Safety Considerations
+
+Food safety is very important when dealing with near-expiry products:
+
+**Quality Indicators:**
+- Visual inspection: Color, texture, signs of spoilage
+- Smell test: Off odors indicate spoilage
+- Package integrity: Damaged packaging may compromise safety
+
+**Responsibility Model:**
+The Near Expiry platform operates on a transparency model where:
+- Restaurants accurately represent expiry dates
+- Customers inspect products before purchase
+- Platform provides disclaimers and education
+
+## 2.3 Target Market
+
+### 2.3.1 Primary Customers
+
+**Budget-Conscious Consumers:**
+- Students with limited disposable income
+- Young professionals managing living costs
+- Large families seeking to reduce food expenses
+- Price-sensitive shoppers willing to accept near-expiry products for significant discounts (30-70% off)
+
+**Environmentally Aware Consumers:**
+- Individuals committed to sustainability
+- People motivated to reduce their environmental footprint
+- Conscious consumers who value preventing waste over perfect product freshness
+- Growing demographic in Jordan, particularly among educated youth
+
+### 2.3.2 Restaurant Partners
+
+**Small to Medium Restaurants:**
+- Cafes, bakeries, and small restaurants with perishable inventory
+- Businesses producing fresh daily items (baked goods, prepared meals)
+- Establishments struggling with inventory forecasting
+- Restaurants wanting to improve sustainability profile
+
+**Business Needs:**
+- Recover costs from near-expiry inventory
+- Reduce waste disposal costs
+- Attract environmentally conscious customers
+- Improve inventory turnover
+
+## 2.4 Related Work and Existing Solutions
+
+Several platforms worldwide address food waste through similar marketplace models:
+
+### 2.4.1 Too Good To Go
+
+**Overview:** Founded in Denmark in 2015, Too Good To Go is the world's largest food waste fighting app with over 80 million registered users across 17 countries [4].
+
+**Business Model:**
+- Restaurants list "Surprise Bags" of surplus food at approximately one-third original price
+- Customers pay typically $3-6 per bag via the app
+- Too Good To Go charges restaurants ~$1.79 per bag plus annual membership fee ($89 in the US)
+- Focus on mystery bags (customers don't know exact contents)
+
+**Key Features:**
+- Mobile app (iOS and Android)
+- Real-time availability updates
+- Payment processing integrated
+- Community features and impact tracking
+- AI-powered surplus prediction tools (launched 2024)
+
+**Impact:** As of 2024, Too Good To Go has saved over 350 million meals from waste, preventing approximately 1 million tonnes of CO2 emissions [4].
+
+### 2.4.2 OLIO
+
+**Overview:** UK-based food sharing app connecting neighbors and local businesses to share surplus food.
+
+**Business Model:**
+- Free for individuals
+- "Food Waste Heroes" collect surplus from businesses
+- Community-driven, volunteer-based distribution
+- Revenue from business partnerships
+
+**Approach:** More community-focused than commercial; emphasizes peer-to-peer sharing rather than restaurant-to-consumer sales.
+
+### 2.4.3 Flashfood
+
+**Overview:** North American app partnering with grocery stores to sell near-expiry products.
+
+**Focus:** Grocery retail rather than restaurants; items scanned and sold through in-store dedicated zones.
+
+**Pricing:** Typically 50% off retail prices for near-expiry items.
+
+### 2.4.4 Karma (Sweden)
+
+**Overview:** Swedish app connecting restaurants and grocery stores with customers for surplus food.
+
+**Model:** Real-time inventory of surplus items (not mystery bags), allowing customers to select specific products.
+
+### 2.4.5 Comparative Analysis
+
+**Table: Comparison of Existing Food Waste Platforms**
+
+| Platform | Geographic Focus | Target Sellers | Pricing Model | Differentiation |
+|----------|-----------------|----------------|---------------|-----------------|
+| Too Good To Go | Global (17 countries) | Restaurants, bakeries, hotels | Mystery bags, ~1/3 price | Largest scale, mobile app, brand recognition |
+| OLIO | UK, parts of Europe | Individuals, businesses | Free (community sharing) | Volunteer-driven, peer-to-peer focus |
+| Flashfood | North America | Grocery stores | ~50% off, in-store | Retail focus, specific products visible |
+| Karma | Sweden, UK | Restaurants, groceries | Variable discounts | Specific item selection, real-time |
+| **Near Expiry** | Jordan (initial) | Restaurants, cafes | 30-70% off, configurable | Web-based, Arabic potential, local focus |
+
+**Near Expiry Differentiation:**
+- **Local Focus:** Designed for Jordanian market with potential Arabic language support
+- **Web-First:** Accessible without app download, lower barrier to entry
+- **Transparency:** Specific products visible (not mystery bags)
+- **Open Source Potential:** Technology stack enables customization
+- **Commission Flexibility:** Configurable rates suitable for local economic context
+
+## 2.5 Technology Background
+
+### 2.5.1 Web Application Architectures
+
+**Three-Tier Architecture:**
+Modern web applications typically use a three-tier architecture separating:
+1. **Presentation Tier:** User interface (HTML, CSS, JavaScript)
+2. **Logic Tier:** Application server processing business rules
+3. **Data Tier:** Database management system
+
+This separation enables independent scaling, technology substitution, and team specialization.
+
+**Model-View-Controller (MVC):**
+Architectural pattern separating applications into three connected components:
+- **Model:** Data and business logic
+- **View:** User interface presentation
+- **Controller:** Handles user input, updates model and view
+
+### 2.5.2 RESTful API Design
+
+**Representational State Transfer (REST):** Architectural style for networked applications based on stateless client-server communication. RESTful APIs use HTTP methods explicitly:
+- **GET:** Retrieve resources
+- **POST:** Create resources
+- **PUT/PATCH:** Update resources
+- **DELETE:** Remove resources
+
+**Benefits:** Simplicity, scalability, statelessness, cacheability, platform independence.
+
+### 2.5.3 Database Design for E-Commerce
+
+E-commerce applications require databases supporting:
+- **ACID Properties:** Atomicity, Consistency, Isolation, Durability for financial transactions
+- **Relational Structure:** Products, orders, users, and their relationships
+- **Performance:** Indexing strategies for fast queries
+- **Scalability:** Connection pooling, query optimization
+
+PostgreSQL provides these capabilities with additional features (JSONB, full-text search, geospatial data).
+
+### 2.5.4 Containerization and Cloud Services
+
+**Docker:** Containerization technology packaging applications with dependencies into portable units. Benefits include:
+- **Consistency:** Same environment across development, testing, production
+- **Isolation:** Applications don't interfere with each other
+- **Portability:** Containers run on any Docker-capable host
+- **Scalability:** Easy horizontal scaling by running multiple container instances
+
+**Cloud Services:** Platforms like Cloudinary (image management), SendGrid (email), and AWS (hosting) provide infrastructure without capital investment.
+
+## 2.6 Ethical Considerations
+
+### 2.6.1 Food Safety Ethics
+
+**Responsibility:** Platform must balance enabling food waste reduction with ensuring customer safety. Ethical considerations include:
+- Clear expiry date disclosure
+- Education about "best before" vs. "use by" distinctions
+- Disclaimers without removing all platform responsibility
+- Monitoring and moderating restaurant practices
+
+### 2.6.2 Fair Pricing
+
+**Balancing Interests:**
+- **Restaurants:** Need sufficient revenue recovery to justify platform use
+- **Customers:** Expect significant discounts for near-expiry products
+- **Platform:** Requires sustainable commission for operations
+
+**Ethical Pricing:** 10% commission is lower than typical delivery platforms (20-30%), reflecting the value exchange and restaurant's already-reduced pricing.
+
+### 2.6.3 Data Privacy
+
+Collecting user data (emails, addresses, order history) creates obligations:
+- **Minimal Collection:** Only gather necessary data
+- **Secure Storage:** Encryption, hashing, access controls
+- **No Unauthorized Sharing:** User data not sold to third parties
+- **Transparency:** Clear privacy policy explaining data use
+
+### 2.6.4 Access and Equity
+
+**Digital Divide:** Platform requires internet access and digital literacy, potentially excluding the most vulnerable populations who might benefit most from affordable food.
+
+**Mitigation Strategies:**
+- Simple, intuitive interface
+- Low data usage for mobile users
+- Future: SMS ordering, phone support, community access points
+
+## 2.7 Environmental Considerations
+
+### 2.7.1 Platform's Environmental Mission
+
+The Near Expiry platform's primary purpose is environmental: reducing food waste to mitigate climate change and resource depletion.
+
+**Direct Impact:** Every kilogram of food diverted from landfills prevents:
+- Methane emissions from decomposition
+- Wasted water, land, and energy used in production
+- Transportation and disposal emissions
+
+**Indirect Impact:**
+- Raises awareness about food waste
+- Changes consumer behavior toward acceptance of near-expiry products
+- Influences restaurant inventory management practices
+
+### 2.7.2 Platform's Own Environmental Footprint
+
+**Digital Infrastructure:** Servers, data centers, and network infrastructure consume energy. Mitigation:
+- Efficient code reducing computational requirements
+- Cloud providers increasingly using renewable energy
+- Minimal data storage (no unnecessary analytics)
+
+**Delivery Emissions:** If customers choose delivery over pickup, vehicle emissions occur. Mitigation:
+- Encourage pickup option
+- Future: Support bicycle/electric vehicle delivery
+- Local focus minimizes delivery distances
+
+### 2.7.3 Net Environmental Benefit
+
+The environmental benefits of preventing food waste far outweigh the platform's digital footprint. Even a small-scale deployment saving 100kg of food weekly prevents more emissions than the platform generates.
+
+---
+
+This background chapter establishes the critical context for the Near Expiry platform: the urgency of the food waste problem, the viability of near-expiry products, existing solutions in the market, technical foundations, and the ethical framework guiding platform design.
+
