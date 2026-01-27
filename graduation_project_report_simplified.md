@@ -2506,3 +2506,229 @@ The environmental benefits of preventing food waste far outweigh the platform's 
 
 This background chapter establishes the critical context for the Near Expiry platform: the urgency of the food waste problem, the viability of near-expiry products, existing solutions in the market, technical foundations, and the ethical framework guiding platform design.
 
+
+# Chapter 1: Introduction
+
+## 1.1 Problem Statement and Motivation
+
+Food waste represents a critical global challenge with profound environmental, economic, and social dimensions. Approximately 1.05 billion tonnes of food are wasted every year worldwide, creating 8-10% of global greenhouse gas emissions and wasting resources equivalent to $1 trillion in economic value [1][2]. Meanwhile, millions of people face food insecurity, creating a stark paradox where edible food is thrown away while populations lack access to affordable nutrition.
+
+Restaurants, bakeries, and food service establishments face particular challenges with perishable inventory. Products approaching their expiration dates must be sold quickly or thrown away, representing significant financial losses. Traditional solutions—steep last-minute discounts or donation to food banks—are often insufficient or logistically complex. At the same time, budget-conscious consumers seek affordable food options but lack efficient ways to discover near-expiry products offering significant savings.
+
+The Near Expiry platform addresses this dual-sided problem by creating a digital marketplace connecting restaurants selling near-expiry products at discounted prices with cost-aware, environmentally conscious customers. This solution benefits all stakeholders: restaurants recover costs from inventory that would otherwise be wasted, customers access quality food at reduced prices (typically 30-70% off), and society reduces environmental impact from food waste.
+
+## 1.2 Aims and Objectives
+
+**Primary Aim:**
+Develop a comprehensive, secure, and user-friendly web platform that helps transactions between restaurants with near-expiry inventory and customers seeking affordable food, thereby reducing food waste and environmental impact.
+
+**Specific Objectives:**
+
+1. **Technical Objectives:**
+   - Design and implement a three-layer web application architecture with clear separation of presentation, logic, and data layers
+   - Develop a RESTful API backend using Node.js and Express.js for scalable business logic processing
+   - Create a responsive React frontend supporting client, restaurant, and admin user interfaces
+   - Implement secure authentication and authorization using JWT tokens and bcrypt password hashing
+   - Deploy the complete system using Docker containerization for consistency and portability
+
+2. **Functional Objectives:**
+   - Enable restaurants to create profiles, upload products with expiry dates, and manage orders
+   - Allow customers to browse products, filter by categories and restaurants, and place orders
+   - Provide interactive mapping of restaurant locations using geocoding and Leaflet visualization
+   - Implement shopping cart functionality with single-restaurant constraint
+   - Create sales analytics dashboards for restaurants to monitor revenue and trends
+   - Build administrative interfaces for system management and commission configuration
+
+3. **Business Objectives:**
+   - Establish a commission-based revenue model (default 10%, configurable) sustainable for platform operations
+   - Minimize operational costs through use of open-source technologies and free-tier cloud services
+   - Create scalable architecture supporting growth from pilot to full deployment
+
+4. **Environmental and Social Objectives:**
+   - Reduce food waste by providing a channel for near-expiry products to reach consumers
+   - Contribute to sustainability goals by preventing edible food from landfills
+   - Increase food affordability for budget-conscious consumers
+   - Support local businesses in recovering value from perishable inventory
+
+## 1.3 Current Solutions and Their Limitations
+
+Several platforms globally address food waste through marketplace models:
+
+**Too Good To Go** (Denmark, global reach): The largest food waste fighting app with 80+ million users. Focuses on mobile app with "surprise bags" where customers don't know exact contents. Strengths: Brand recognition, payment integration. Limitations: Not available in Jordan, requires app download, mystery bag model limits customer choice.
+
+**OLIO** (UK): Community-based food sharing emphasizing peer-to-peer exchange. Strengths: Strong community ethos, volunteer-driven. Limitations: Less suitable for commercial restaurant operations, geographic limitation.
+
+**Flashfood** (North America): Partners with grocery stores for near-expiry retail items. Strengths: Large grocery partnerships. Limitations: Retail focus (not restaurants), geographic limitation, requires in-store pickup.
+
+**Gaps in Existing Solutions:**
+- No established platform serving Jordan and Arabic-speaking Middle East markets
+- Most solutions require mobile app downloads, creating barriers for some users
+- Limited transparency in some models (mystery bags vs. specific product selection)
+- Few platforms specifically optimized for small restaurant and bakery operations
+
+## 1.4 Proposed Solution: The Near Expiry Platform
+
+The Near Expiry platform addresses identified gaps through a web-based marketplace specifically designed for the Jordanian market with potential regional expansion.
+
+**Key Technical Features:**
+
+1. **Three-Layer Architecture:** Clean separation of React frontend, Express.js backend API, and PostgreSQL database ensures modularity and scalability.
+
+2. **RESTful API Design:** Stateless API with JWT authentication enables future mobile app development while serving current web frontend.
+
+3. **Role-Based Access Control:** Three distinct user roles (client, restaurant, admin) with tailored interfaces and permissions ensure appropriate access to functionality.
+
+4. **Interactive Restaurant Mapping:** Integration with OpenStreetMap and Leaflet provides visual discovery of nearby restaurants through geocoded addresses.
+
+5. **Responsive Web Design:** Mobile-first CSS ensures accessibility across devices without requiring app installation.
+
+6. **Docker Deployment:** Containerized architecture enables consistent deployment across development, testing, and production environments.
+
+**Business Features:**
+
+1. **Commission Model:** Configurable percentage-based commission (default 10%) creates sustainable revenue while being fair to restaurant partners.
+
+2. **Transparent Pricing:** All product prices and expiry dates clearly displayed, empowering customer decision-making.
+
+3. **Order Management:** Status tracking (pending → preparing → ready → completed) provides visibility for customers and control for restaurants.
+
+4. **Sales Analytics:** Chart-based visualizations help restaurants understand revenue trends and optimize inventory management.
+
+**Evaluation and Validation:**
+
+The platform was validated through comprehensive testing:
+- **Functional Testing:** All user workflows (registration, product management, ordering, analytics) tested with 100+ test scenarios
+- **Performance Testing:** API response times, page load speeds, and database query performance measured against targets
+- **Security Testing:** Authentication bypass attempts, SQL injection, and XSS attacks verified as prevented
+- **Cross-Browser Testing:** Functionality confirmed across Chrome, Firefox, Safari, and Edge
+
+## 1.5 Contributions and Innovations
+
+This project makes several notable contributions:
+
+**1. Technical Implementation:**
+- Complete full-stack web platform built from scratch using modern technologies
+- Integration of multiple external services (Cloudinary for images, Nodemailer for email, Nominatim for geocoding) demonstrates API integration skills
+- Docker-based deployment solution provides production-ready infrastructure
+- Database design following third normal form with strategic indexing for performance
+
+**2. Business Model:**
+- Commission-based revenue model balances restaurant, customer, and platform sustainability
+- Lower commission rate (10% vs. 20-30% typical for delivery platforms) acknowledges restaurant's already-reduced pricing
+- No payment gateway integration reduces operational complexity and compliance burden while enabling rapid deployment
+
+**3. Environmental Impact:**
+- Platform directly addresses UN Sustainable Development Goal 12.3 (halve food waste by 2030)
+- Creates economic incentives for waste reduction rather than relying solely on altruism
+- Raises awareness about food expiry dates and safe consumption of near-expiry products
+
+**4. Educational Value:**
+- Demonstrates end-to-end software development lifecycle from requirements analysis to deployment
+- Showcases integration of theoretical concepts (database normalization, REST principles, security best practices) into working system
+- Provides portfolio piece demonstrating full-stack development competency
+
+**5. Regional Relevance:**
+- Platform designed for Jordanian market context (economic conditions, cultural values, local business needs)
+- Addresses food affordability challenges relevant to Jordan's economic situation
+- Architecture supports future Arabic language localization
+
+## 1.6 System Overview
+
+**Figure 1: High-Level System Architecture**
+
+```
+┌───────────────────────────────────────────────────────────┐
+│                       CLIENT LAYER                        │
+│                                                           │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
+│  │   Client    │  │ Restaurant  │  │ Admin Dashboard │  │
+│  │  Interface  │  │  Dashboard  │  │                 │  │
+│  │   (React)   │  │   (React)   │  │     (React)     │  │
+│  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘  │
+│         │                │                   │           │
+│         └────────────────┴───────────────────┘           │
+│                          │                               │
+└──────────────────────────┼───────────────────────────────┘
+                           │ HTTPS/JSON API
+┌──────────────────────────▼───────────────────────────────┐
+│                    APPLICATION LAYER                      │
+│                                                           │
+│  ┌───────────────────────────────────────────────────┐   │
+│  │            Express.js REST API Server            │   │
+│  │  ┌────────────────────────────────────────────┐  │   │
+│  │  │ Authentication │ Products │ Orders │ Sales │  │   │
+│  │  └────────────────────────────────────────────┘  │   │
+│  └───────────────────────────────────────────────────┘   │
+│                          │                               │
+└──────────────────────────┼───────────────────────────────┘
+                           │ SQL Queries
+┌──────────────────────────▼───────────────────────────────┐
+│                      DATA LAYER                           │
+│                                                           │
+│  ┌───────────────────────────────────────────────────┐   │
+│  │             PostgreSQL Database                   │   │
+│  │  ┌────────────────────────────────────────────┐  │   │
+│  │  │ Users │ Restaurants │ Products │ Orders   │  │   │
+│  │  └────────────────────────────────────────────┘  │   │
+│  └───────────────────────────────────────────────────┘   │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+
+         External Services (Integrated via APIs)
+┌──────────────┐  ┌──────────────┐  ┌──────────────────┐
+│  Cloudinary  │  │    SMTP      │  │   Nominatim/     │
+│ (Image CDN)  │  │   (Email)    │  │ OpenStreetMap    │
+└──────────────┘  └──────────────┘  └──────────────────┘
+```
+
+**User Flows:**
+
+**Client Flow:**
+1. Browse products on homepage or map view
+2. Filter by category, restaurant, price
+3. Add products to cart (single-restaurant constraint)
+4. Checkout with pickup or delivery selection
+5. Receive order confirmation via email
+6. Track order status
+7. Pick up or receive delivery
+
+**Restaurant Flow:**
+1. Register restaurant account
+2. Complete profile with address (geocoded to coordinates)
+3. Upload products with images, prices, expiry dates
+4. Receive order notifications
+5. Update order status (preparing → ready → completed)
+6. View sales analytics and revenue trends
+
+**Admin Flow:**
+1. View system statistics (users, restaurants, orders, revenue)
+2. Manage user accounts (activate/deactivate)
+3. Configure commission percentage
+4. Monitor platform health and activity
+
+## 1.7 Report Structure
+
+This report is organized as follows:
+
+**Chapter 2: Background** - Provides context on food waste problem, near-expiry products, target markets, existing solutions, technology foundations, and ethical considerations.
+
+**Chapter 3: Design** - Details system architecture, functional and non-functional requirements, database design, API structure, design constraints, standards compliance, alternative approaches, and safety considerations.
+
+**Chapter 4: Implementation** - Describes technology stack, backend and frontend implementation details, third-party service integration, Docker deployment, infrastructure dependencies, trade-offs, and implementation assumptions.
+
+**Chapter 5: Results and Discussion** - Presents functional validation results, performance measurements, testing outcomes, and critical discussion of strengths, limitations, challenges, and design decision validation.
+
+**Chapter 6: Economical, Ethic, and Contemporary Issues** - Analyzes cost estimation, revenue model, ethical frameworks, dilemmas and their resolution, environmental impact, regional relevance, and contemporary constraints.
+
+**Chapter 7: Project Management** - Covers project timeline, resource allocation, quality management strategies, risk assessment and mitigation, and procurement processes.
+
+**Chapter 8: Conclusion and Future Work** - Summarizes key contributions, assesses outcomes against objectives, reflects on lessons learned, and proposes future enhancements including payment integration, mobile app development, real-time features, and regional expansion.
+
+**Appendix A: User Manual** - Provides step-by-step user guidance for clients, restaurants, and administrators.
+
+**References** - Lists all cited sources in IEEE format.
+
+---
+
+This introduction establishes the critical need for food waste reduction, articulates clear objectives, positions the Near Expiry platform within the landscape of existing solutions, and provides a roadmap for the detailed technical and analytical chapters that follow.
+
