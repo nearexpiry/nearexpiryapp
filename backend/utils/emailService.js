@@ -155,6 +155,132 @@ const sendPasswordResetEmail = async (email, resetToken) => {
 };
 
 /**
+ * Send email verification OTP
+ * @param {string} email - Recipient email address
+ * @param {string} otpCode - 6-digit OTP code
+ * @returns {Promise<object>} Email send result
+ */
+const sendVerificationOTPEmail = async (email, otpCode) => {
+  const transporter = createTransporter();
+
+  if (!transporter) {
+    throw new Error('Email service is not configured properly');
+  }
+
+  const mailOptions = {
+    from: `"Near Expiry" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: 'Verify Your Email - Near Expiry',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Verification</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          .container {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 30px;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          .header h1 {
+            color: #4CAF50;
+            margin: 0;
+          }
+          .content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 5px;
+          }
+          .otp-code {
+            display: block;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            color: #4CAF50;
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+          }
+          .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+          }
+          .warning {
+            color: #d32f2f;
+            font-weight: bold;
+            margin-top: 20px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Near Expiry</h1>
+          </div>
+          <div class="content">
+            <h2>Verify Your Email Address</h2>
+            <p>Hello,</p>
+            <p>Thank you for registering with Near Expiry! To complete your registration, please enter the following verification code:</p>
+            <span class="otp-code">${otpCode}</span>
+            <p class="warning">This code will expire in 10 minutes for security reasons.</p>
+            <p>If you did not create an account with Near Expiry, please ignore this email.</p>
+            <p>Best regards,<br>The Near Expiry Team</p>
+          </div>
+          <div class="footer">
+            <p>&copy; 2025 Near Expiry. All rights reserved.</p>
+            <p>This is an automated email, please do not reply.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+    text: `
+      Verify Your Email - Near Expiry
+
+      Hello,
+
+      Thank you for registering with Near Expiry! To complete your registration, please enter the following verification code:
+
+      ${otpCode}
+
+      This code will expire in 10 minutes for security reasons.
+
+      If you did not create an account with Near Expiry, please ignore this email.
+
+      Best regards,
+      The Near Expiry Team
+    `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Verification OTP email sent:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('Error sending verification OTP email:', error);
+    throw new Error('Failed to send verification email');
+  }
+};
+
+/**
  * Send welcome email (optional - can be used after registration)
  * @param {string} email - Recipient email address
  * @param {string} name - User's name
@@ -521,6 +647,7 @@ const sendOrderStatusUpdateEmail = async (email, statusDetails) => {
 
 module.exports = {
   sendPasswordResetEmail,
+  sendVerificationOTPEmail,
   sendWelcomeEmail,
   sendOrderConfirmationEmail,
   sendOrderStatusUpdateEmail,

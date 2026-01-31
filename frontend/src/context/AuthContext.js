@@ -83,9 +83,18 @@ export const AuthProvider = ({ children }) => {
         role,
       });
 
-      const { token, user } = response.data.data;
+      // New flow: registration requires email verification
+      if (response.data.data?.requiresVerification) {
+        return {
+          success: true,
+          requiresVerification: true,
+          email: response.data.data.email,
+          data: response.data,
+        };
+      }
 
-      // Store token
+      // Fallback for old behavior (shouldn't happen with new backend)
+      const { token, user } = response.data.data;
       localStorage.setItem('token', token);
       setToken(token);
       setUser(user);
@@ -95,6 +104,45 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || 'Registration failed. Please try again.';
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // Verify email with OTP
+  const verifyEmail = async (email, otpCode) => {
+    try {
+      const response = await axiosInstance.post('/auth/verify-email', {
+        email,
+        otpCode,
+      });
+
+      const { token, user } = response.data.data;
+
+      // Store token and log in user
+      localStorage.setItem('token', token);
+      setToken(token);
+      setUser(user);
+      setIsAuthenticated(true);
+
+      return { success: true, data: response.data };
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || 'Verification failed. Please try again.';
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // Resend verification OTP
+  const resendVerificationOTP = async (email) => {
+    try {
+      const response = await axiosInstance.post('/auth/resend-verification', {
+        email,
+      });
+
+      return { success: true, data: response.data };
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || 'Failed to resend code. Please try again.';
       return { success: false, error: errorMessage };
     }
   };
@@ -117,6 +165,16 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true, data: response.data };
     } catch (error) {
+      // Check if email verification is required
+      if (error.response?.status === 403 && error.response?.data?.data?.requiresVerification) {
+        return {
+          success: false,
+          requiresVerification: true,
+          email: error.response.data.data.email,
+          error: error.response.data.message,
+        };
+      }
+
       const errorMessage =
         error.response?.data?.message || 'Login failed. Please try again.';
       return { success: false, error: errorMessage };
@@ -183,6 +241,8 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     loading,
     register,
+    verifyEmail,
+    resendVerificationOTP,
     login,
     logout,
     forgotPassword,

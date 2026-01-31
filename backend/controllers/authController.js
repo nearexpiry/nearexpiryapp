@@ -2,7 +2,14 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { query, getClient } = require('../db/db');
 const { generateToken } = require('../utils/jwt');
-const { sendPasswordResetEmail, sendWelcomeEmail } = require('../utils/emailService');
+const { sendPasswordResetEmail, sendVerificationOTPEmail, sendWelcomeEmail } = require('../utils/emailService');
+
+/**
+ * Generate a 6-digit OTP code
+ */
+const generateOTP = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
 
 /**
  * Validate email format
@@ -72,6 +79,8 @@ const getPasswordValidationError = (password) => {
  * POST /api/auth/register
  */
 const register = async (req, res) => {
+  const client = await getClient();
+
   try {
     const { email, password, role } = req.body;
 
@@ -108,7 +117,7 @@ const register = async (req, res) => {
     }
 
     // Check if user already exists
-    const existingUser = await query('SELECT id FROM users WHERE email = $1', [
+    const existingUser = await client.query('SELECT id, email_verified FROM users WHERE email = $1', [
       email.toLowerCase(),
     ]);
 
@@ -123,15 +132,138 @@ const register = async (req, res) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Insert user into database
-    const result = await query(
-      'INSERT INTO users (email, password_hash, role) VALUES ($1, $2, $3) RETURNING id, email, role, created_at',
+    // Generate OTP code
+    const otpCode = generateOTP();
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Begin transaction
+    await client.query('BEGIN');
+
+    // Insert user into database with email_verified = false
+    const result = await client.query(
+      'INSERT INTO users (email, password_hash, role, email_verified) VALUES ($1, $2, $3, false) RETURNING id, email, role, created_at',
       [email.toLowerCase(), passwordHash, role]
     );
 
     const user = result.rows[0];
 
-    // Generate JWT token
+    // Insert OTP token
+    await client.query(
+      'INSERT INTO email_verification_tokens (user_id, otp_code, expires_at) VALUES ($1, $2, $3)',
+      [user.id, otpCode, otpExpiresAt]
+    );
+
+    // Commit transaction
+    await client.query('COMMIT');
+
+    // Send verification email
+    await sendVerificationOTPEmail(user.email, otpCode);
+
+    res.status(201).json({
+      status: 'success',
+      message: 'Registration successful. Please check your email for the verification code.',
+      data: {
+        email: user.email,
+        requiresVerification: true,
+      },
+    });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Registration error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Registration failed. Please try again.',
+    });
+  } finally {
+    client.release();
+  }
+};
+
+/**
+ * Verify email with OTP code
+ * POST /api/auth/verify-email
+ */
+const verifyEmail = async (req, res) => {
+  const client = await getClient();
+
+  try {
+    const { email, otpCode } = req.body;
+
+    // Validation
+    if (!email || !otpCode) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email and OTP code are required',
+      });
+    }
+
+    // Find user by email
+    const userResult = await client.query(
+      'SELECT id, email, role, email_verified FROM users WHERE email = $1',
+      [email.toLowerCase()]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid email or OTP code',
+      });
+    }
+
+    const user = userResult.rows[0];
+
+    // Check if already verified
+    if (user.email_verified) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email is already verified',
+      });
+    }
+
+    // Find valid OTP token
+    const tokenResult = await client.query(
+      'SELECT id, otp_code, expires_at FROM email_verification_tokens WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1',
+      [user.id]
+    );
+
+    if (tokenResult.rows.length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'No verification code found. Please request a new one.',
+      });
+    }
+
+    const tokenData = tokenResult.rows[0];
+
+    // Check if OTP has expired
+    if (new Date() > new Date(tokenData.expires_at)) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Verification code has expired. Please request a new one.',
+      });
+    }
+
+    // Check if OTP matches
+    if (tokenData.otp_code !== otpCode) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid verification code',
+      });
+    }
+
+    // Begin transaction
+    await client.query('BEGIN');
+
+    // Update user's email_verified status
+    await client.query('UPDATE users SET email_verified = true WHERE id = $1', [user.id]);
+
+    // Delete used OTP token
+    await client.query('DELETE FROM email_verification_tokens WHERE user_id = $1', [user.id]);
+
+    // Commit transaction
+    await client.query('COMMIT');
+
+    // Generate JWT token for automatic login after verification
     const token = generateToken(user.id, user.role);
 
     // Send welcome email (non-blocking)
@@ -139,25 +271,107 @@ const register = async (req, res) => {
       console.error('Failed to send welcome email:', err);
     });
 
-    res.status(201).json({
+    res.status(200).json({
       status: 'success',
-      message: 'User registered successfully',
+      message: 'Email verified successfully',
       data: {
         token,
         user: {
           id: user.id,
           email: user.email,
           role: user.role,
-          createdAt: user.created_at,
         },
       },
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    await client.query('ROLLBACK');
+    console.error('Email verification error:', error);
     res.status(500).json({
       status: 'error',
-      message: 'Registration failed. Please try again.',
+      message: 'Email verification failed. Please try again.',
     });
+  } finally {
+    client.release();
+  }
+};
+
+/**
+ * Resend verification OTP
+ * POST /api/auth/resend-verification
+ */
+const resendVerificationOTP = async (req, res) => {
+  const client = await getClient();
+
+  try {
+    const { email } = req.body;
+
+    // Validation
+    if (!email) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email is required',
+      });
+    }
+
+    // Find user by email
+    const userResult = await client.query(
+      'SELECT id, email, email_verified FROM users WHERE email = $1',
+      [email.toLowerCase()]
+    );
+
+    if (userResult.rows.length === 0) {
+      // Return generic success message for security
+      return res.status(200).json({
+        status: 'success',
+        message: 'If an account with that email exists, a new verification code has been sent.',
+      });
+    }
+
+    const user = userResult.rows[0];
+
+    // Check if already verified
+    if (user.email_verified) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email is already verified',
+      });
+    }
+
+    // Generate new OTP code
+    const otpCode = generateOTP();
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Begin transaction
+    await client.query('BEGIN');
+
+    // Delete any existing OTP tokens for this user
+    await client.query('DELETE FROM email_verification_tokens WHERE user_id = $1', [user.id]);
+
+    // Insert new OTP token
+    await client.query(
+      'INSERT INTO email_verification_tokens (user_id, otp_code, expires_at) VALUES ($1, $2, $3)',
+      [user.id, otpCode, otpExpiresAt]
+    );
+
+    // Commit transaction
+    await client.query('COMMIT');
+
+    // Send verification email
+    await sendVerificationOTPEmail(user.email, otpCode);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'A new verification code has been sent to your email.',
+    });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Resend verification OTP error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to resend verification code. Please try again.',
+    });
+  } finally {
+    client.release();
   }
 };
 
@@ -179,7 +393,7 @@ const login = async (req, res) => {
 
     // Find user by email
     const result = await query(
-      'SELECT id, email, password_hash, role, is_active FROM users WHERE email = $1',
+      'SELECT id, email, password_hash, role, is_active, email_verified FROM users WHERE email = $1',
       [email.toLowerCase()]
     );
 
@@ -207,6 +421,18 @@ const login = async (req, res) => {
       return res.status(401).json({
         status: 'error',
         message: 'Invalid email or password',
+      });
+    }
+
+    // Check if email is verified
+    if (!user.email_verified) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Please verify your email before logging in',
+        data: {
+          requiresVerification: true,
+          email: user.email,
+        },
       });
     }
 
@@ -462,6 +688,8 @@ const getCurrentUser = async (req, res) => {
 
 module.exports = {
   register,
+  verifyEmail,
+  resendVerificationOTP,
   login,
   forgotPassword,
   resetPassword,

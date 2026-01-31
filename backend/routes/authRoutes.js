@@ -11,6 +11,20 @@ const { verifyToken } = require('../middleware/auth');
 router.post('/register', authController.register);
 
 /**
+ * @route   POST /api/auth/verify-email
+ * @desc    Verify email with OTP code
+ * @access  Public
+ */
+router.post('/verify-email', authController.verifyEmail);
+
+/**
+ * @route   POST /api/auth/resend-verification
+ * @desc    Resend verification OTP email
+ * @access  Public
+ */
+router.post('/resend-verification', authController.resendVerificationOTP);
+
+/**
  * @route   POST /api/auth/login
  * @desc    Login user and return JWT token
  * @access  Public
