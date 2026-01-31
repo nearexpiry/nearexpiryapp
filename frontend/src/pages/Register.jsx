@@ -67,11 +67,16 @@ const Register = () => {
     const result = await register(email, password, role);
 
     if (result.success) {
-      // Redirect based on user role
-      if (role === 'restaurant') {
-        navigate('/restaurant/profile');
+      // If verification is required, redirect to verify email page
+      if (result.requiresVerification) {
+        navigate('/verify-email', { state: { email: result.email, role } });
       } else {
-        navigate('/');
+        // Redirect based on user role (fallback for old behavior)
+        if (role === 'restaurant') {
+          navigate('/restaurant/profile');
+        } else {
+          navigate('/');
+        }
       }
     } else {
       setError(result.error);

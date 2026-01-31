@@ -29,7 +29,7 @@ const Login = () => {
 
     if (result.success) {
       // Redirect based on user role
-      const userRole = result.data?.user?.role;
+      const userRole = result.data?.data?.user?.role;
       if (userRole === 'restaurant') {
         navigate('/restaurant/profile');
       } else if (userRole === 'admin') {
@@ -37,6 +37,9 @@ const Login = () => {
       } else {
         navigate('/');
       }
+    } else if (result.requiresVerification) {
+      // Redirect to email verification page
+      navigate('/verify-email', { state: { email: result.email } });
     } else {
       setError(result.error);
     }
