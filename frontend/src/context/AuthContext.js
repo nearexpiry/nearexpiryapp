@@ -159,8 +159,8 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true, data: response.data };
     } catch (error) {
-      // Check if email verification is required
-      if (error.response?.status === 403 && error.response?.data?.data?.requiresVerification) {
+      // Check if email verification is required (check data flag, not just status code)
+      if (error.response?.data?.data?.requiresVerification) {
         return {
           success: false,
           requiresVerification: true,
