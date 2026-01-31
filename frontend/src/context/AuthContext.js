@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Verify email with OTP
+  // Verify email with OTP (does not auto-login, user must login after verification)
   const verifyEmail = async (email, otpCode) => {
     try {
       const response = await axiosInstance.post('/auth/verify-email', {
@@ -116,14 +116,8 @@ export const AuthProvider = ({ children }) => {
         otpCode,
       });
 
-      const { token, user } = response.data.data;
-
-      // Store token and log in user
-      localStorage.setItem('token', token);
-      setToken(token);
-      setUser(user);
-      setIsAuthenticated(true);
-
+      // Don't auto-login - just return success
+      // User will be redirected to login page
       return { success: true, data: response.data };
     } catch (error) {
       const errorMessage =
