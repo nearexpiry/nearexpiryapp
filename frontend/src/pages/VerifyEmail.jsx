@@ -1,38 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
 const VerifyEmail = () => {
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { verifyEmail, resendVerificationOTP } = useAuth();
+
+  // Get email from: 1) navigation state, 2) URL query param, 3) user input
+  const initialEmail = location.state?.email || searchParams.get('email') || '';
+
+  const [email, setEmail] = useState(initialEmail);
+  const [showEmailInput, setShowEmailInput] = useState(!initialEmail);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [codeSent, setCodeSent] = useState(!!initialEmail); // Code already sent if email came from registration
 
   const inputRefs = useRef([]);
-  const { verifyEmail, resendVerificationOTP } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  // Get email from navigation state
-  const email = location.state?.email;
-  const role = location.state?.role;
 
   useEffect(() => {
-    // Redirect if no email provided
-    if (!email) {
-      navigate('/register');
-    }
-  }, [email, navigate]);
-
-  useEffect(() => {
-    // Focus first input on mount
-    if (inputRefs.current[0]) {
+    // Focus first OTP input on mount if email is set
+    if (email && codeSent && inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
-  }, []);
+  }, [email, codeSent]);
 
   useEffect(() => {
     // Resend cooldown timer
@@ -42,7 +39,7 @@ const VerifyEmail = () => {
     }
   }, [resendCooldown]);
 
-  const handleChange = (index, value) => {
+  const handleOtpChange = (index, value) => {
     // Only allow digits
     if (value && !/^\d$/.test(value)) return;
 
@@ -72,13 +69,44 @@ const VerifyEmail = () => {
         if (i < 6) newOtp[i] = char;
       });
       setOtp(newOtp);
-      // Focus last filled input or the next empty one
       const lastIndex = Math.min(pastedData.length - 1, 5);
       inputRefs.current[lastIndex].focus();
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSendCode = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (!email) {
+      setError('Please enter your email address');
+      return;
+    }
+
+    setResendLoading(true);
+
+    const result = await resendVerificationOTP(email);
+
+    if (result.success) {
+      setSuccess('Verification code sent! Check your email.');
+      setCodeSent(true);
+      setShowEmailInput(false);
+      setResendCooldown(60);
+      // Focus first OTP input
+      setTimeout(() => {
+        if (inputRefs.current[0]) {
+          inputRefs.current[0].focus();
+        }
+      }, 100);
+    } else {
+      setError(result.error);
+    }
+
+    setResendLoading(false);
+  };
+
+  const handleVerify = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -95,20 +123,17 @@ const VerifyEmail = () => {
     const result = await verifyEmail(email, otpCode);
 
     if (result.success) {
-      setSuccess('Email verified successfully! Redirecting...');
+      setSuccess('Email verified successfully! Redirecting to login...');
       setTimeout(() => {
-        // Redirect based on user role
-        if (role === 'restaurant') {
-          navigate('/restaurant/profile');
-        } else {
-          navigate('/');
-        }
+        navigate('/login', { state: { message: 'Email verified! Please log in.' } });
       }, 1500);
     } else {
       setError(result.error);
       // Clear OTP on error
       setOtp(['', '', '', '', '', '']);
-      inputRefs.current[0].focus();
+      if (inputRefs.current[0]) {
+        inputRefs.current[0].focus();
+      }
     }
 
     setLoading(false);
@@ -125,10 +150,11 @@ const VerifyEmail = () => {
 
     if (result.success) {
       setSuccess('A new verification code has been sent to your email.');
-      setResendCooldown(60); // 60 second cooldown
-      // Clear current OTP
+      setResendCooldown(60);
       setOtp(['', '', '', '', '', '']);
-      inputRefs.current[0].focus();
+      if (inputRefs.current[0]) {
+        inputRefs.current[0].focus();
+      }
     } else {
       setError(result.error);
     }
@@ -136,69 +162,122 @@ const VerifyEmail = () => {
     setResendLoading(false);
   };
 
-  if (!email) {
-    return null;
-  }
+  const handleChangeEmail = () => {
+    setShowEmailInput(true);
+    setCodeSent(false);
+    setOtp(['', '', '', '', '', '']);
+    setError('');
+    setSuccess('');
+  };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
         <h1 className="auth-title">Verify Your Email</h1>
-        <p className="auth-subtitle">
-          We've sent a 6-digit verification code to<br />
-          <strong>{email}</strong>
-        </p>
 
-        {error && <div className="auth-error">{error}</div>}
-        {success && <div className="auth-success">{success}</div>}
+        {!codeSent || showEmailInput ? (
+          <>
+            <p className="auth-subtitle">
+              Enter your email address to receive a verification code
+            </p>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="otp-container">
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                ref={(el) => (inputRefs.current[index] = el)}
-                type="text"
-                inputMode="numeric"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                onPaste={index === 0 ? handlePaste : undefined}
-                className="otp-input"
-                disabled={loading}
-              />
-            ))}
-          </div>
+            {error && <div className="auth-error">{error}</div>}
+            {success && <div className="auth-success">{success}</div>}
 
-          <p className="otp-expiry-note">Code expires in 10 minutes</p>
+            <form onSubmit={handleSendCode} className="auth-form">
+              <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  disabled={resendLoading}
+                />
+              </div>
 
-          <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Verifying...' : 'Verify Email'}
-          </button>
-        </form>
+              <button
+                type="submit"
+                className="auth-button"
+                disabled={resendLoading || !email}
+              >
+                {resendLoading ? 'Sending...' : 'Send Verification Code'}
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <p className="auth-subtitle">
+              We've sent a 6-digit verification code to<br />
+              <strong>{email}</strong>
+            </p>
+
+            {error && <div className="auth-error">{error}</div>}
+            {success && <div className="auth-success">{success}</div>}
+
+            <form onSubmit={handleVerify} className="auth-form">
+              <div className="otp-container">
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    onPaste={index === 0 ? handlePaste : undefined}
+                    className="otp-input"
+                    disabled={loading}
+                  />
+                ))}
+              </div>
+
+              <p className="otp-expiry-note">Code expires in 10 minutes</p>
+
+              <button type="submit" className="auth-button" disabled={loading}>
+                {loading ? 'Verifying...' : 'Verify Email'}
+              </button>
+            </form>
+
+            <div className="auth-divider">
+              <span>Didn't receive the code?</span>
+            </div>
+
+            <button
+              onClick={handleResend}
+              className="auth-secondary-button"
+              disabled={resendLoading || resendCooldown > 0}
+            >
+              {resendLoading
+                ? 'Sending...'
+                : resendCooldown > 0
+                ? `Resend Code (${resendCooldown}s)`
+                : 'Resend Code'}
+            </button>
+
+            <div className="auth-links" style={{ marginTop: '15px' }}>
+              <button
+                onClick={handleChangeEmail}
+                className="auth-link"
+                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                Use a different email
+              </button>
+            </div>
+          </>
+        )}
 
         <div className="auth-divider">
-          <span>Didn't receive the code?</span>
+          <span>Already verified?</span>
         </div>
 
-        <button
-          onClick={handleResend}
-          className="auth-secondary-button"
-          disabled={resendLoading || resendCooldown > 0}
-        >
-          {resendLoading
-            ? 'Sending...'
-            : resendCooldown > 0
-            ? `Resend Code (${resendCooldown}s)`
-            : 'Resend Code'}
-        </button>
-
-        <div className="auth-links" style={{ marginTop: '20px' }}>
-          <Link to="/register" className="auth-link">
-            Use a different email
-          </Link>
-        </div>
+        <Link to="/login" className="auth-secondary-button">
+          Back to Login
+        </Link>
       </div>
     </div>
   );

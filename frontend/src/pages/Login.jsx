@@ -1,20 +1,32 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
 const Login = () => {
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // Show success message if redirected from email verification
+  useEffect(() => {
+    if (location.state?.message) {
+      setSuccess(location.state.message);
+      // Clear the state so message doesn't persist on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
     // Basic validation
@@ -54,6 +66,7 @@ const Login = () => {
         <p className="auth-subtitle">Welcome back to Near Expiry</p>
 
         {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
@@ -90,6 +103,10 @@ const Login = () => {
         <div className="auth-links">
           <Link to="/forgot-password" className="auth-link">
             Forgot password?
+          </Link>
+          <span style={{ margin: '0 10px', color: '#ccc' }}>|</span>
+          <Link to="/verify-email" className="auth-link">
+            Verify email
           </Link>
         </div>
 

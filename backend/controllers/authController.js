@@ -263,25 +263,15 @@ const verifyEmail = async (req, res) => {
     // Commit transaction
     await client.query('COMMIT');
 
-    // Generate JWT token for automatic login after verification
-    const token = generateToken(user.id, user.role);
-
     // Send welcome email (non-blocking)
     sendWelcomeEmail(user.email).catch((err) => {
       console.error('Failed to send welcome email:', err);
     });
 
+    // Don't return token - user should login after verification
     res.status(200).json({
       status: 'success',
-      message: 'Email verified successfully',
-      data: {
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-        },
-      },
+      message: 'Email verified successfully. You can now log in.',
     });
   } catch (error) {
     await client.query('ROLLBACK');
