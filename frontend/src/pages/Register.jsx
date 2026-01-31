@@ -3,6 +3,29 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
+/**
+ * Validate password strength and return array of missing requirements
+ */
+const validatePassword = (password) => {
+  const errors = [];
+  if (!password || password.length < 8) {
+    errors.push('at least 8 characters');
+  }
+  if (!/[A-Z]/.test(password)) {
+    errors.push('one uppercase letter');
+  }
+  if (!/[a-z]/.test(password)) {
+    errors.push('one lowercase letter');
+  }
+  if (!/[0-9]/.test(password)) {
+    errors.push('one number');
+  }
+  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+    errors.push('one special character');
+  }
+  return errors;
+};
+
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,8 +55,10 @@ const Register = () => {
       return;
     }
 
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long');
+    // Validate password strength
+    const passwordErrors = validatePassword(password);
+    if (passwordErrors.length > 0) {
+      setError(`Password must contain ${passwordErrors.join(', ')}`);
       setLoading(false);
       return;
     }
@@ -105,10 +130,20 @@ const Register = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password (min. 8 characters)"
+              placeholder="Enter your password"
               required
               disabled={loading}
             />
+            <div className="password-requirements">
+              <small>Password must contain:</small>
+              <ul>
+                <li className={password.length >= 8 ? 'valid' : ''}>At least 8 characters</li>
+                <li className={/[A-Z]/.test(password) ? 'valid' : ''}>One uppercase letter</li>
+                <li className={/[a-z]/.test(password) ? 'valid' : ''}>One lowercase letter</li>
+                <li className={/[0-9]/.test(password) ? 'valid' : ''}>One number</li>
+                <li className={/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password) ? 'valid' : ''}>One special character (!@#$%^&*...)</li>
+              </ul>
+            </div>
           </div>
 
           <div className="form-group">

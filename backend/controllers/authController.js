@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { query, getClient } = require('../db/db');
 const { generateToken } = require('../utils/jwt');
-const { sendPasswordResetEmail } = require('../utils/emailService');
+const { sendPasswordResetEmail, sendWelcomeEmail } = require('../utils/emailService');
 
 /**
  * Validate email format
@@ -14,9 +14,57 @@ const isValidEmail = (email) => {
 
 /**
  * Validate password strength
+ * Requirements:
+ * - At least 8 characters
+ * - At least one uppercase letter
+ * - At least one lowercase letter
+ * - At least one number
+ * - At least one special character
  */
 const isValidPassword = (password) => {
-  return password && password.length >= 8;
+  if (!password || password.length < 8) {
+    return false;
+  }
+
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+  return hasUppercase && hasLowercase && hasNumber && hasSpecialChar;
+};
+
+/**
+ * Get password validation error message
+ */
+const getPasswordValidationError = (password) => {
+  if (!password) {
+    return 'Password is required';
+  }
+
+  const errors = [];
+
+  if (password.length < 8) {
+    errors.push('at least 8 characters');
+  }
+  if (!/[A-Z]/.test(password)) {
+    errors.push('one uppercase letter');
+  }
+  if (!/[a-z]/.test(password)) {
+    errors.push('one lowercase letter');
+  }
+  if (!/[0-9]/.test(password)) {
+    errors.push('one number');
+  }
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    errors.push('one special character (!@#$%^&*()_+-=[]{};\':"|,.<>/?)');
+  }
+
+  if (errors.length === 0) {
+    return null;
+  }
+
+  return `Password must contain ${errors.join(', ')}`;
 };
 
 /**
@@ -47,7 +95,7 @@ const register = async (req, res) => {
     if (!isValidPassword(password)) {
       return res.status(400).json({
         status: 'error',
-        message: 'Password must be at least 8 characters long',
+        message: getPasswordValidationError(password),
       });
     }
 
@@ -85,6 +133,11 @@ const register = async (req, res) => {
 
     // Generate JWT token
     const token = generateToken(user.id, user.role);
+
+    // Send welcome email (non-blocking)
+    sendWelcomeEmail(user.email).catch((err) => {
+      console.error('Failed to send welcome email:', err);
+    });
 
     res.status(201).json({
       status: 'success',
@@ -280,7 +333,7 @@ const resetPassword = async (req, res) => {
     if (!isValidPassword(newPassword)) {
       return res.status(400).json({
         status: 'error',
-        message: 'Password must be at least 8 characters long',
+        message: getPasswordValidationError(newPassword),
       });
     }
 
