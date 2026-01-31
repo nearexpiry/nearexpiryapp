@@ -10,7 +10,8 @@
     "db:init": "node db/scripts/init.js",
     "db:seed": "node db/scripts/seed.js",
     "db:setup": "node db/scripts/setup.js",
-    "db:test": "node db/scripts/test.js"
+    "db:test": "node db/scripts/test.js",
+    "db:migrate": "node db/scripts/migrate.js"
   },
   "keywords": [],
   "author": "",
