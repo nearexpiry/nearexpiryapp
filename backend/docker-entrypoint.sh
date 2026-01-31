@@ -39,5 +39,9 @@ else
   echo "Database already initialized - skipping setup"
 fi
 
+# Always run migrations (they track which ones have been applied)
+echo "Running database migrations..."
+npm run db:migrate
+
 echo "Starting application..."
 exec npm start
